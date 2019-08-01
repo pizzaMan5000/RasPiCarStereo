@@ -3,7 +3,7 @@ RasPiCarStereo is an app that turns a Raspberry Pi 2 or 3 (maybe 1 too) into a c
 
 It's still being worked on, but most everything works. The bluetooth stuff could be done better.
 
-To make a RasPiCarStereo, you need a Raspberry Pi of course. I made this for a Raspberry Pi 3 but it should work for 2 as well. The Raspberry Pi 1 probably wont be fast enough for what we want. Think of the load times everytime you start your car, faster is better. Install Raspbian Desktop edition, not the lite edition. Also set up any bluetooth devices you will be using in your car while your working on it to make things easier, not that it can't be done after its installed, its just a pain right now.
+To make a RasPiCarStereo, you need a Raspberry Pi of course. I made this for a Raspberry Pi 3 but it should work for 2 as well. The Raspberry Pi 1 probably wont be fast enough for what we want. Think of the load times everytime you start your car, faster is better. Install Raspbian Desktop edition, not the lite edition. Also set up any bluetooth devices you will be using in your car while your working on it to make things easier, not that it can't be done after its installed, its just a pain right now. To install the app, copy RasPiCarStereo.jar to the home folder (/home/pi/) and make a folder in the home folder called "Media". That's where all the media should go. You will have to install and setup more software listed below.
 
 You will also need:
 
