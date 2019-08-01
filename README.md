@@ -3,7 +3,7 @@ RasPiCarStereo is an app that turns a Raspberry Pi 2 or 3 (maybe 1 too) into a c
 
 It's still being worked on, but most everything works. The bluetooth stuff could be done better.
 
-To make a RasPiCarStereo, you need a Raspberry Pi of course. I made this for a Raspberry Pi 3 but it should work for 2 as well. The Raspberry Pi 1 probably wont be fast enough for what we want. Think of the load times everytime you start your car, faster is better. Install Raspbian Desktop edition, not the lite edition. Also set up any bluetooth devices you will be using in your car while your working on it to make things eaier, not that it can't be done after its installed.
+To make a RasPiCarStereo, you need a Raspberry Pi of course. I made this for a Raspberry Pi 3 but it should work for 2 as well. The Raspberry Pi 1 probably wont be fast enough for what we want. Think of the load times everytime you start your car, faster is better. Install Raspbian Desktop edition, not the lite edition. Also set up any bluetooth devices you will be using in your car while your working on it to make things easier, not that it can't be done after its installed, its just a pain right now.
 
 You will also need:
 
@@ -15,7 +15,7 @@ You will also need:
  - ScanTool OBDLink - usb connection to car's OBD2 computer - found online for $30 - needed to look at engine info
  - mini sdcard for raspbery pi - about 8GB or more
  - usb hub to make things easier to assemble
- - WIFI usb dongle $10 - even if you have a Raspberry Pi 3 which comes with wifi, there's a lot of problems with it, disable it
+ - WIFI usb dongle $10 - even if you have a Raspberry Pi 3 which comes with wifi, built in one has many problems, disable it
  - Bluetooth dongle if you dont have the raspberry pi 3
  - UBEC DC/DC Step-Down (Buck) Converter - 5V @ 3A output - to convert the car's power to what the Raspberry Pi wants
  
@@ -53,5 +53,7 @@ I will put more info up on the actual wiring done to connect it to the car when 
 Random info:
 
 This is just a big wrapper for omxplayer media player, rtl-sdr software, navit navigator, and scantool OBD2 app.
+
+The bult-in wifi seems to have serious problems in the Raspberry Pi 3. Mine suddenly stopped working for no reason. After many hours of researcha and troubleshooting, determined it to be a hardware failure. Its recognized by linux, but will not do anything. It also has a problem with bluetooth. The same radio is used for both bluetooth and wifi which is a problem if you have both on. So even if my wifi was working i'd have problems with is anyways. So just buy a cheap usb dongle that works with raspbian and disable the wifi. If you don't know which usb wifi to buy just get a "WiPi". Its a usb wifi dongle made just for raspberry pi. It'll just work, no drivers to install.
 
 This could be made with diffrerent computer other than Raspberry Pi, but you will have to change the code to play MP3s/media with another player than omxplayer, because its made for Raspberry Pi only. Also the screen i used was made to plug into a Raspberry Pi's GPIO. You will have to make sure it works with your computer or simply get a more expensive one without the GPIO connector that has usb instead. Make sure you get a TOUCH screen and not just a screen.
