@@ -209,7 +209,7 @@ public class MP3Screen {
 						
 						if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
 							// if thread is dead
-							startPlayThread();
+							startPlayThread(allSubFiles[list.getSelectedIndex()]);
 						} else {
 							// if thread is alive
 							addFileToPlaylist(0, allSubFiles[list.getSelectedIndex()]);
@@ -219,41 +219,13 @@ public class MP3Screen {
 					
 					} else if (fileTypeList.get(list.getSelectedIndex()) == 1){
 						// if selected is folder...
-						/*
-						Thread loopThread = new Thread(){
-							public void run(){
-								System.out.println(""+allSubFiles[list.getSelectedIndex()]);
-								File[] tempFile = allSubFiles[list.getSelectedIndex()].listFiles();
-								// get list of files from folder and play them all
-								for (int i = 0; i < tempFile.length; i++){
-									System.out.println(tempFile[i].getName());
-									//playFile = tempFile[i].getName();
-									//playFile = "'" + allSubFiles[list.getSelectedIndex()].getName() + "/" + playFile + "'";
-									playFile = tempFile[i].getAbsolutePath();
-									playFile = "'" + playFile + "'";
-									if (CarStereo.mp3IsPlaying) {
-											playFile();
-											getFileInfo();
-										try {
-											CarStereo.mp3Process.waitFor();
-										} catch (InterruptedException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-								CarStereo.mp3IsPlaying = false;
-								CarStereo.playMode = 0;
-							}
-						};
-						loopThread.start();
-						*/
 						file = allSubFiles[list.getSelectedIndex()];
 						getFileList(file, true);
 						list.setListData(fileNameList.toArray());
 						list.setSelectedIndex(0);
 						playButton.setIcon(new ImageIcon(backButtonIcon));
 					} else if (fileTypeList.get(list.getSelectedIndex()) == 2){
-						// selected is back button on top of list
+						// if selected is back button on top of list
 						file = file.getParentFile();
 						String fileName = file.getAbsolutePath();
 						boolean showBack = true;
@@ -277,13 +249,31 @@ public class MP3Screen {
 					CarStereo.mediaPlaylist = new ArrayList<File>();
 				}
 				if (list.getSelectedIndex() >= 0){
-					if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
-						startPlayThread();
-					} else{
-						addFileToPlaylist(allSubFiles[list.getSelectedIndex()]);
-					}	
+					if (fileTypeList.get(list.getSelectedIndex()) == 0){
+						if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
+							startPlayThread(allSubFiles[list.getSelectedIndex()]);
+						} else{
+							addFileToPlaylist(allSubFiles[list.getSelectedIndex()]);
+						}	
+					} else if (fileTypeList.get(list.getSelectedIndex()) == 1){
+						// if selected is a folder, then add the contents, but not of folders inside it
+						File tempFile = allSubFiles[list.getSelectedIndex()];
+						File[] tempList = tempFile.listFiles();
+						for (int i = 0; i < tempList.length; i++){
+							if (tempList[i].isFile()){
+								if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
+									startPlayThread(tempList[i]);
+									System.out.println("Playing song...");
+								} else {
+									addFileToPlaylist(tempList[i]);
+									System.out.println("Added song #" + i);
+								}
+							}
+						
+						}
+					
+					}
 				}
-				
 				
 			}
 			
@@ -368,7 +358,7 @@ public class MP3Screen {
 		}
 	}
 	
-	void startPlayThread(){
+	void startPlayThread(final File tempFile){
 		CarStereo.killAllProcesses();
 		CarStereo.playMode = 2;
 		CarStereo.mp3IsPlaying = true;
@@ -377,12 +367,12 @@ public class MP3Screen {
 		CarStereo.mp3PlayerThread = new Thread(){
 			public void run(){
 				System.out.println("Add to list...");
-				addFileToPlaylist(allSubFiles[list.getSelectedIndex()]);
+				addFileToPlaylist(tempFile);
 				while(CarStereo.mediaPlaylist.size() > 0 && CarStereo.mp3IsPlaying){
 					//playFile = allSubFiles[list.getSelectedIndex()].getAbsolutePath();
 					//addFileToPlaylist(allSubFiles[list.getSelectedIndex()]);
 					System.out.println(" Playlist size = " + CarStereo.mediaPlaylist.size());
-					System.out.println("Playing File....");
+					System.out.println("Play Thread Started");
 					playFile = CarStereo.mediaPlaylist.get(0).getAbsolutePath();
 					playFile = "'" + playFile + "'";
 					playFile();

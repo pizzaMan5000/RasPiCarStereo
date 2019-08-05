@@ -57,12 +57,14 @@ public class MainScreen {
 	JButton engineButton;
 	JButton optionsButton;
 	JButton playPauseButton;
+	JButton nextTrackButton;
 	
-	JButton exitButton; // todo remove when done
+	JButton exitButton; // TODO remove when done
 	
 	BufferedImage radioIcon;
 	BufferedImage navigationIcon;
 	BufferedImage playPauseIcon;
+	BufferedImage nextTrackIcon;
 	BufferedImage mp3Icon;
 	BufferedImage bluetoothIcon;
 	BufferedImage engineIcon;
@@ -130,15 +132,166 @@ public class MainScreen {
 		labelInfo2.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());
 		
+		exitButton = new JButton();
+		exitButton.setFont(font2);
+		exitButton.setText("x");
+		exitButton.setBackground(Color.BLACK);
+		exitButton.setForeground(Color.WHITE);
+		exitButton.setBorder(BorderFactory.createEmptyBorder());
+		//exitButton.setToolTipText("EXIT");
+		exitButton.setSize(50, 40);
+		exitButton.setBounds(screenWidth/2-exitButton.getWidth()/2, screenHeight - 70, exitButton.getWidth(), exitButton.getHeight());		 
+		
+		try {
+			radioIcon = ImageIO.read(getClass().getResource("/images/radio-small.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		radioButton = new JButton(new ImageIcon(radioIcon));
+		radioButton.setBorder(BorderFactory.createEmptyBorder());
+		radioButton.setBackground(Color.BLACK);
+		radioButton.setSize(100, 100);
+		radioButton.setBounds(screenWidth/6*4-radioButton.getWidth()/2, screenHeight/4*1-radioButton.getHeight()/2, radioButton.getWidth(), radioButton.getHeight());
+		
+		try {
+			mp3Icon = ImageIO.read(getClass().getResource("/images/playlist-small.png"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		mp3Button = new JButton(new ImageIcon(mp3Icon));
+		mp3Button.setBackground(Color.black);
+		mp3Button.setBorder(BorderFactory.createEmptyBorder());
+		//mp3Button.setText("MP3s");
+		mp3Button.setSize(100,100);
+		mp3Button.setBounds(screenWidth/6*5-mp3Button.getWidth()/2, screenHeight/4*1-mp3Button.getHeight()/2, mp3Button.getWidth(), mp3Button.getHeight());
+		
+		try {
+			bluetoothIcon = ImageIO.read(getClass().getResource("/images/bluetooth-small.png"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		bluetoothButton = new JButton(new ImageIcon(bluetoothIcon));
+		bluetoothButton.setBackground(Color.black);
+		bluetoothButton.setBorder(BorderFactory.createEmptyBorder());
+		//bluetoothButton.setText("Bluetooth");
+		bluetoothButton.setSize(100,100);
+		bluetoothButton.setBounds(screenWidth/6*5-bluetoothButton.getWidth()/2, screenHeight/4*2-bluetoothButton.getHeight()/2, bluetoothButton.getWidth(), bluetoothButton.getHeight());
+		
+		
+		try {
+			navigationIcon = ImageIO.read(getClass().getResource("/images/navigation-small.png"));
+			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		navigationButton = new JButton(new ImageIcon(navigationIcon));
+		navigationButton.setBackground(Color.black);
+		navigationButton.setBorder(BorderFactory.createEmptyBorder());
+		//navigationButton.setText("Navigation");
+		navigationButton.setSize(100,100);
+		navigationButton.setBounds(screenWidth/6*4-navigationButton.getWidth()/2, screenHeight/4*2-navigationButton.getHeight()/2, navigationButton.getWidth(), navigationButton.getHeight());
+		
+		try {
+			engineIcon = ImageIO.read(getClass().getResource("/images/engine-small.png"));
+			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		engineButton = new JButton(new ImageIcon(engineIcon));
+		engineButton.setBackground(Color.black);
+		engineButton.setBorder(BorderFactory.createEmptyBorder());
+		//fileManagerButton.setText("File Manager");
+		engineButton.setSize(100,100);
+		engineButton.setBounds(screenWidth/6*4-engineButton.getWidth()/2, screenHeight/4*3-engineButton.getHeight()/2, engineButton.getWidth(), engineButton.getHeight());
+		
+		try {
+			optionsIcon = ImageIO.read(getClass().getResource("/images/options-small.png"));
+			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		optionsButton = new JButton(new ImageIcon(optionsIcon));
+		optionsButton.setBackground(Color.black);
+		optionsButton.setBorder(BorderFactory.createEmptyBorder());
+		//fileManagerButton.setText("File Manager");
+		optionsButton.setSize(100,100);
+		optionsButton.setBounds(screenWidth/6*5-optionsButton.getWidth()/2, screenHeight/4*3-optionsButton.getHeight()/2, optionsButton.getWidth(), optionsButton.getHeight());
+		
+		
+		try {
+			playPauseIcon = ImageIO.read(getClass().getResource("/images/play_pause.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		playPauseButton = new JButton(new ImageIcon(playPauseIcon));
+		playPauseButton.setBorder(BorderFactory.createEmptyBorder());
+		playPauseButton.setBackground(Color.BLACK);
+		playPauseButton.setSize(playPauseIcon.getWidth(), playPauseIcon.getHeight());
+		playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+
+		try {
+			nextTrackIcon = ImageIO.read(getClass().getResource("/images/forward.png"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		nextTrackButton = new JButton(new ImageIcon(nextTrackIcon));
+		nextTrackButton.setBorder(BorderFactory.createEmptyBorder());
+		nextTrackButton.setBackground(Color.BLACK);
+		nextTrackButton.setSize(nextTrackIcon.getWidth(), nextTrackIcon.getHeight());
+		nextTrackButton.setBounds(screenWidth/4+20, screenHeight/8*6-nextTrackButton.getHeight()/2, nextTrackButton.getWidth(), nextTrackButton.getHeight());
+		nextTrackButton.setVisible(false);
+		
+		panel.add(labelTime);
+		panel.add(exitButton);
+		panel.add(radioButton);
+		panel.add(navigationButton);
+		panel.add(bluetoothButton);
+		panel.add(mp3Button);
+		panel.add(optionsButton);
+		panel.add(engineButton);
+		panel.add(labelInfo1);
+		panel.add(labelInfo2);
+		panel.add(playPauseButton);
+		panel.add(nextTrackButton);
+		
+		frame.add(panel);
+		frame.setSize(screenWidth, screenHeight);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setUndecorated(true);
+		frame.setVisible(true);
+		
+		loadButtonlisteners();
+		// set volume
+		String command = "amixer sset Master,0 100%";
+		try {
+			Process setVolume = Runtime.getRuntime().exec(command);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		timeThread = new Thread(){
 			public void run(){
 				while(true){
 					time = LocalDateTime.now();
 					labelTime.setText(timeFormatter.format(time));
 					if (CarStereo.playMode == 0){
+						playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+						playPauseButton.setVisible(false);
+						nextTrackButton.setVisible(false);
+						
 						labelInfo1.setText(dayFormatter.format(time));
 						labelInfo2.setText(monthFormatter.format(time));
 					} else if (CarStereo.playMode == 1){
+						playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+						playPauseButton.setVisible(true);
+						nextTrackButton.setVisible(false);
+						
 						labelInfo1.setText(CarStereo.infoText1);
 						if (CarStereo.radioIsPlaying){
 							labelInfo2.setText(CarStereo.infoText2);
@@ -146,11 +299,19 @@ public class MainScreen {
 							labelInfo2.setText("Radio Stopped");
 						}
 					} else if (CarStereo.playMode == 2){
+						playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()-20, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+						playPauseButton.setVisible(true);
+						nextTrackButton.setVisible(true);
+						
 						if (!CarStereo.mp3Process.isAlive() && !CarStereo.mp3PlayerThread.isAlive()){
 							CarStereo.playMode = 0;
 						}
 						
 					} else if (CarStereo.playMode == 3){
+						playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+						playPauseButton.setVisible(false);
+						nextTrackButton.setVisible(false);
+						
 						if (CarStereo.bluetoothIsPlaying){
 							labelInfo1.setText("Bluetooth Connected");
 							labelInfo2.setText(CarStereo.infoText2);
@@ -302,136 +463,6 @@ public class MainScreen {
 			}
 		};
 		blueToothMonitorThread.start();
-		
-		exitButton = new JButton();
-		exitButton.setFont(font2);
-		exitButton.setText("x");
-		exitButton.setBackground(Color.BLACK);
-		exitButton.setForeground(Color.WHITE);
-		exitButton.setBorder(BorderFactory.createEmptyBorder());
-		//exitButton.setToolTipText("EXIT");
-		exitButton.setSize(50, 40);
-		exitButton.setBounds(screenWidth/2-exitButton.getWidth()/2, screenHeight - 70, exitButton.getWidth(), exitButton.getHeight());		 
-		
-		try {
-			radioIcon = ImageIO.read(getClass().getResource("/images/radio-small.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		radioButton = new JButton(new ImageIcon(radioIcon));
-		radioButton.setBorder(BorderFactory.createEmptyBorder());
-		radioButton.setBackground(Color.BLACK);
-		radioButton.setSize(100, 100);
-		radioButton.setBounds(screenWidth/6*4-radioButton.getWidth()/2, screenHeight/4*1-radioButton.getHeight()/2, radioButton.getWidth(), radioButton.getHeight());
-		
-		try {
-			mp3Icon = ImageIO.read(getClass().getResource("/images/playlist-small.png"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		mp3Button = new JButton(new ImageIcon(mp3Icon));
-		mp3Button.setBackground(Color.black);
-		mp3Button.setBorder(BorderFactory.createEmptyBorder());
-		//mp3Button.setText("MP3s");
-		mp3Button.setSize(100,100);
-		mp3Button.setBounds(screenWidth/6*5-mp3Button.getWidth()/2, screenHeight/4*1-mp3Button.getHeight()/2, mp3Button.getWidth(), mp3Button.getHeight());
-		
-		try {
-			bluetoothIcon = ImageIO.read(getClass().getResource("/images/bluetooth-small.png"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		bluetoothButton = new JButton(new ImageIcon(bluetoothIcon));
-		bluetoothButton.setBackground(Color.black);
-		bluetoothButton.setBorder(BorderFactory.createEmptyBorder());
-		//bluetoothButton.setText("Bluetooth");
-		bluetoothButton.setSize(100,100);
-		bluetoothButton.setBounds(screenWidth/6*5-bluetoothButton.getWidth()/2, screenHeight/4*2-bluetoothButton.getHeight()/2, bluetoothButton.getWidth(), bluetoothButton.getHeight());
-		
-		
-		try {
-			navigationIcon = ImageIO.read(getClass().getResource("/images/navigation-small.png"));
-			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		navigationButton = new JButton(new ImageIcon(navigationIcon));
-		navigationButton.setBackground(Color.black);
-		navigationButton.setBorder(BorderFactory.createEmptyBorder());
-		//navigationButton.setText("Navigation");
-		navigationButton.setSize(100,100);
-		navigationButton.setBounds(screenWidth/6*4-navigationButton.getWidth()/2, screenHeight/4*2-navigationButton.getHeight()/2, navigationButton.getWidth(), navigationButton.getHeight());
-		
-		try {
-			engineIcon = ImageIO.read(getClass().getResource("/images/engine-small.png"));
-			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		engineButton = new JButton(new ImageIcon(engineIcon));
-		engineButton.setBackground(Color.black);
-		engineButton.setBorder(BorderFactory.createEmptyBorder());
-		//fileManagerButton.setText("File Manager");
-		engineButton.setSize(100,100);
-		engineButton.setBounds(screenWidth/6*4-engineButton.getWidth()/2, screenHeight/4*3-engineButton.getHeight()/2, engineButton.getWidth(), engineButton.getHeight());
-		
-		try {
-			optionsIcon = ImageIO.read(getClass().getResource("/images/options-small.png"));
-			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		optionsButton = new JButton(new ImageIcon(optionsIcon));
-		optionsButton.setBackground(Color.black);
-		optionsButton.setBorder(BorderFactory.createEmptyBorder());
-		//fileManagerButton.setText("File Manager");
-		optionsButton.setSize(100,100);
-		optionsButton.setBounds(screenWidth/6*5-optionsButton.getWidth()/2, screenHeight/4*3-optionsButton.getHeight()/2, optionsButton.getWidth(), optionsButton.getHeight());
-		
-		
-		try {
-			playPauseIcon = ImageIO.read(getClass().getResource("/images/play_pause.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		playPauseButton = new JButton(new ImageIcon(playPauseIcon));
-		playPauseButton.setBorder(BorderFactory.createEmptyBorder());
-		playPauseButton.setBackground(Color.BLACK);
-		playPauseButton.setSize(playPauseIcon.getWidth(), playPauseIcon.getHeight());
-		playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
-		
-		panel.add(labelTime);
-		panel.add(exitButton);
-		panel.add(radioButton);
-		panel.add(navigationButton);
-		panel.add(bluetoothButton);
-		panel.add(mp3Button);
-		panel.add(optionsButton);
-		panel.add(engineButton);
-		panel.add(labelInfo1);
-		panel.add(labelInfo2);
-		panel.add(playPauseButton);
-		
-		frame.add(panel);
-		frame.setSize(screenWidth, screenHeight);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setUndecorated(true);
-		frame.setVisible(true);
-		
-		loadButtonlisteners();
-		// set volume
-		String command = "amixer sset Master,0 100%";
-		try {
-			Process setVolume = Runtime.getRuntime().exec(command);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	void loadButtonlisteners(){
@@ -525,6 +556,15 @@ public class MainScreen {
 
 			public void actionPerformed(ActionEvent arg0) {
 				openBluetoothScreen();
+			}
+			
+		});
+		
+		nextTrackButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				CarStereo.writer.write("q");
+				CarStereo.writer.flush();
 			}
 			
 		});
