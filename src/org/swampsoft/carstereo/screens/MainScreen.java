@@ -59,7 +59,7 @@ public class MainScreen {
 	JButton playPauseButton;
 	JButton nextTrackButton;
 	
-	JButton exitButton; // TODO remove when done
+	JButton exitButton; // TODO remove or hide when done
 	
 	BufferedImage radioIcon;
 	BufferedImage navigationIcon;
@@ -79,7 +79,7 @@ public class MainScreen {
 	DateTimeFormatter dayFormatter;
 	DateTimeFormatter monthFormatter;
 	
-	Thread timeThread;
+	Thread guiThread;
 	Thread blueToothMonitorThread;
 	
 	public ArrayList<String> blueToothClientNames;
@@ -90,6 +90,7 @@ public class MainScreen {
 	public Writer blueToothWriter;
 	
 	public RadioScreen radioScreen;
+	public MP3Screen mp3Screen;
 	
 	public MainScreen(){
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
@@ -121,14 +122,14 @@ public class MainScreen {
 		labelInfo1 = new JLabel(dayFormatter.format(time));
 		labelInfo1.setForeground(Color.WHITE);
 		labelInfo1.setFont(font2);
-		labelInfo1.setSize(350, 32);
+		labelInfo1.setSize(450, 32);
 		labelInfo1.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo1.setBounds(screenWidth/4-labelInfo1.getWidth()/2, screenHeight/8*3, labelInfo1.getWidth(), labelInfo1.getHeight());
 		
 		labelInfo2 = new JLabel(monthFormatter.format(time));
 		labelInfo2.setForeground(Color.WHITE);
 		labelInfo2.setFont(font2);
-		labelInfo2.setSize(350, 32);
+		labelInfo2.setSize(450, 32);
 		labelInfo2.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());
 		
@@ -265,9 +266,11 @@ public class MainScreen {
 		frame.setUndecorated(true);
 		frame.setVisible(true);
 		
+		// BUTTON LISTENERS
 		loadButtonlisteners();
+		
 		// set volume
-		String command = "amixer sset Master,0 100%";
+		String command = "amixer sset Master,0 100%"; // change master volume you want here
 		try {
 			Process setVolume = Runtime.getRuntime().exec(command);
 		} catch (IOException e) {
@@ -275,11 +278,14 @@ public class MainScreen {
 			e.printStackTrace();
 		}
 		
-		timeThread = new Thread(){
+		// this thread updates all the mainScreen gui stuff
+		guiThread = new Thread(){
 			public void run(){
 				while(true){
 					time = LocalDateTime.now();
 					labelTime.setText(timeFormatter.format(time));
+					
+					// play modes 0=off 1=FM/AM 2=MP3 3=BlueTooth
 					if (CarStereo.playMode == 0){
 						playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
 						playPauseButton.setVisible(false);
@@ -303,7 +309,9 @@ public class MainScreen {
 						playPauseButton.setVisible(true);
 						nextTrackButton.setVisible(true);
 						
-						if (!CarStereo.mp3Process.isAlive() && !CarStereo.mp3PlayerThread.isAlive()){
+						if (CarStereo.mp3Process == null){
+							CarStereo.playMode = 0;
+						} else if (!CarStereo.mp3Process.isAlive() && !CarStereo.mp3PlayerThread.isAlive() && CarStereo.mediaPlaylist.isEmpty()){
 							CarStereo.playMode = 0;
 						}
 						
@@ -321,7 +329,7 @@ public class MainScreen {
 						}
 					}
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -329,7 +337,7 @@ public class MainScreen {
 				}
 			}
 		};
-		timeThread.start();
+		guiThread.start();
 		
 		blueToothMonitorThread = new Thread(){
 			public void run(){
@@ -506,7 +514,12 @@ public class MainScreen {
 				if (CarStereo.playMode == 1){
 					startStopRadio();
 				} else if (CarStereo.playMode == 2){
-					playPauseMP3();
+					if (CarStereo.mp3PlayerThread != null && !CarStereo.mp3PlayerThread.isAlive() && !CarStereo.mediaPlaylist.isEmpty()){
+						mp3Screen.startPlayThread(null);
+					} else {
+						playPauseMP3();
+					}
+					
 				} else if (CarStereo.playMode == 3){
 					String command = "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_" + CarStereo.currentlyConnectedBluetooth + " org.bluez.MediaControl1.Play";
 					try {
@@ -563,8 +576,13 @@ public class MainScreen {
 		nextTrackButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				CarStereo.writer.write("q");
-				CarStereo.writer.flush();
+				try {
+						CarStereo.writer.write("q");
+						CarStereo.writer.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+				}
 			}
 			
 		});
@@ -583,12 +601,18 @@ public class MainScreen {
 	}
 	
 	void openMP3Screen(){
-		new MP3Screen(this);
+		mp3Screen = new MP3Screen(this);
 	}
 	
 	void playPauseMP3(){
-		CarStereo.writer.write("p");
-		CarStereo.writer.flush();
+		
+		try {
+			CarStereo.writer.write("p");
+			CarStereo.writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//CarStereo.writer.close();
 		
 		if (CarStereo.mp3IsPlaying){

@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -40,14 +39,17 @@ public class PlaylistScreen {
 	
 	List playlistCopy;
 	ArrayList<String> listNames;
+	FileEntry fileEntry[];
 	
 	JButton backButton;
 	JButton minusButton;
 	JButton shuffleButton;
+	JButton clearAllButton;
 	
 	BufferedImage backButtonImage;
 	BufferedImage minusButtonImage;
 	BufferedImage shuffleButtonImage;
+	BufferedImage clearAllButtonImage;
 	
 	MP3Screen mp3Screen;
 	
@@ -109,12 +111,26 @@ public class PlaylistScreen {
 		shuffleButton.setBorder(BorderFactory.createEmptyBorder());
 		shuffleButton.setBounds(screenWidth-100-shuffleButton.getWidth()/2, screenHeight/4-shuffleButton.getHeight()/2, shuffleButton.getWidth(), shuffleButton.getHeight());
 
+		try {
+			clearAllButtonImage = ImageIO.read(getClass().getResource("/images/cancel-small.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		clearAllButton = new JButton(new ImageIcon(clearAllButtonImage));
+		clearAllButton.setBackground(Color.BLACK);
+		clearAllButton.setSize(100, 100);
+		clearAllButton.setBorder(BorderFactory.createEmptyBorder());
+		clearAllButton.setBounds(screenWidth-100-clearAllButton.getWidth()/2, screenHeight/2+clearAllButton.getHeight()-clearAllButton.getHeight()/4, clearAllButton.getWidth(), clearAllButton.getHeight());
+		
 		playlistCopy = new ArrayList(CarStereo.mediaPlaylist);
 		
 		//list = new JList(CarStereo.mediaPlaylist.toArray());
 		list = new JList();
+		list.setCellRenderer(new CustomCellRenderer());
 		list.setBackground(Color.BLACK);
 		list.setForeground(Color.WHITE);
+		list.setSelectionBackground(Color.WHITE);
+		list.setSelectionForeground(Color.BLACK);
 		list.setFont(font);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setVisibleRowCount(7);
@@ -138,6 +154,7 @@ public class PlaylistScreen {
 		panel.add(scrollPane);
 		panel.add(minusButton);
 		panel.add(shuffleButton);
+		panel.add(clearAllButton);
 		
 		frame.add(panel);
 		frame.setSize(screenWidth, screenHeight);
@@ -177,13 +194,37 @@ public class PlaylistScreen {
 				playlistCopy = null;
 			}
 		});
+		
+		clearAllButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				CarStereo.mediaPlaylist.clear();
+				refreshList();
+			}
+		});
 	}
 	
 	void refreshList(){
 		listNames = new ArrayList();
+		fileEntry = new FileEntry[CarStereo.mediaPlaylist.size()];
+		
 		for (int i = 0; i < CarStereo.mediaPlaylist.size(); i++){
 			listNames.add(CarStereo.mediaPlaylist.get(i).getName());
+			
+			String path = "/images/music-tiny.png";
+			String extension = CarStereo.mediaPlaylist.get(i).getName().substring(CarStereo.mediaPlaylist.get(i).getName().lastIndexOf(".")+1);
+			System.out.println("File extension: " + extension);
+			if (extension.toLowerCase().equals("mp4") || extension.toLowerCase().equals("avi") || extension.toLowerCase().equals("mov") || 
+					extension.toLowerCase().equals("mkv") || extension.toLowerCase().equals("mov") || extension.toLowerCase().equals("ogv") || 
+					extension.toLowerCase().equals("mpeg") || extension.toLowerCase().equals("wmv") || extension.toLowerCase().equals("webm")){
+				path = "/images/video-tiny.png";
+			} else if (extension.toLowerCase().equals("m3u")){
+				path = "/images/playlist-tiny.png";
+			}
+			
+			fileEntry[i] = new FileEntry(CarStereo.mediaPlaylist.get(i).getName(), path);
 		}
-		list.setListData(listNames.toArray());
+		
+		//list.setListData(listNames.toArray());
+		list.setListData(fileEntry);
 	}
 }
