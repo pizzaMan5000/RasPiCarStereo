@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -21,22 +22,15 @@ import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
 
 import org.swampsoft.carstereo.screens.MainScreen;
-import org.swampsoft.carstereo.screens.SlideDownScreen;
+import org.swampsoft.carstereo.screens.FullScreenControls;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListener;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
 public class CarStereo {
+	public static double version = 1.00;
+	
 	public static boolean radioIsPlaying = false;
 	public static boolean mp3IsPlaying = false;
 	public static boolean bluetoothIsPlaying = false;
@@ -52,7 +46,7 @@ public class CarStereo {
 	public static Thread radioTextThread;
 	
 	public static OutputStream stream;
-	public static PrintWriter writer;
+	public static OutputStreamWriter writer;
 	
 	// strings for info text on mainscreen
 	public static String infoText1;
@@ -75,6 +69,8 @@ public class CarStereo {
 	
 	public static ArrayList<File> mediaPlaylist;
 	
+	public static FullScreenControls fullScreenControls;
+	
 	public static GraphicsDevice device = GraphicsEnvironment
 	        .getLocalGraphicsEnvironment().getScreenDevices()[0];
 	
@@ -94,8 +90,6 @@ public class CarStereo {
 		loadProperties();
 		
 		MainScreen mainScreen = new MainScreen();
-		
-		//new SlideDownScreen(mainScreen); // this was an experiment - wouldn't stay focused so...
 	}
 	
 	public static void saveProperties(){
@@ -126,10 +120,8 @@ public class CarStereo {
 			properties.load(in);
 			in.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		lastRadioStation = properties.getProperty("lastRadioStation");
@@ -145,12 +137,17 @@ public class CarStereo {
 	
 	public static void stopMP3Player(){
 		if(CarStereo.writer != null){
-			CarStereo.mediaPlaylist.clear();
+			//CarStereo.mediaPlaylist.clear();
 			CarStereo.mp3PlayerThread.interrupt();
 			CarStereo.mp3PlayerThread = null;
-			CarStereo.writer.write("q");
-			CarStereo.writer.flush();
-			CarStereo.writer.close();
+			try {
+				CarStereo.writer.write("q");
+				//CarStereo.writer.flush();
+				//CarStereo.writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			CarStereo.mp3IsPlaying = false;
 			CarStereo.playMode = 0;
 		}
