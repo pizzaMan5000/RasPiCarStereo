@@ -234,6 +234,7 @@ public class MainScreen {
 		playPauseButton.setBackground(Color.BLACK);
 		playPauseButton.setSize(playPauseIcon.getWidth(), playPauseIcon.getHeight());
 		playPauseButton.setBounds(screenWidth/4-playPauseButton.getWidth()/2, screenHeight/8*6-playPauseButton.getHeight()/2, playPauseButton.getWidth(), playPauseButton.getHeight());
+		playPauseButton.setVisible(false);
 
 		try {
 			nextTrackIcon = ImageIO.read(getClass().getResource("/images/forward.png"));
@@ -329,7 +330,7 @@ public class MainScreen {
 						}
 					}
 					try {
-						Thread.sleep(500);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
