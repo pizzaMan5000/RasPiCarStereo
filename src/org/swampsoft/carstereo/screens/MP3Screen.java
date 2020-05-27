@@ -191,7 +191,8 @@ public class MP3Screen {
 		scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		scrollPane.getViewport().setViewPosition(new Point(0, 0));
 		scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
-		scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createEmptyBorder());
+		//scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
 			@Override
 			protected void configureScrollBarColors() {
