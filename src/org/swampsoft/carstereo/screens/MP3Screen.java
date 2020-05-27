@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -87,7 +88,9 @@ public class MP3Screen {
 		MEDIA_FOLDER_PATH=System.getProperty("user.home")+"/Media";
 		file=new File(MEDIA_FOLDER_PATH);
 		MEDIA_FOLDER_PATH_ABSOLUTE = file.getAbsolutePath();
-		getFileList(file, false); // GET FILE LIST
+		
+		// GET FILE LIST
+		getFileList(file, false); 
 		
 		frame = new JFrame("Media List");
 		frame.setBackground(Color.BLACK);
@@ -310,6 +313,9 @@ public class MP3Screen {
 		
 		//file=new File(MEDIA_FOLDER_PATH);
 		allSubFiles=file.listFiles();
+		
+		Arrays.sort(allSubFiles);
+		
 		int counter = 0;
 		
 		fileNameList = new ArrayList();
@@ -321,7 +327,6 @@ public class MP3Screen {
 		} else {
 			fileEntry = new FileEntry[allSubFiles.length + 1];
 		}
-		
 		
 		if (showBackOption){
 			fileNameList.add("  <<  LAST FOLDER  <<");
@@ -350,6 +355,8 @@ public class MP3Screen {
 					fileEntry[counter] = new FileEntry(files.getName(), "/images/folder-open-tiny.png");
 					counter++;
 				} else {
+					String extension = files.getName().substring(files.getName().lastIndexOf(".")+1);
+					
 					//System.out.println(files.getName()+" is file");
 					fileNameList.add(""+files.getName());
 					fileTypeList.add(0);
@@ -357,7 +364,6 @@ public class MP3Screen {
 					// set image to music, then check if its music and change it if its not
 					String path = "/images/music-tiny.png"; 
 					
-					String extension = files.getName().substring(files.getName().lastIndexOf(".")+1);
 					//System.out.println("Get File:" + extension);
 					if (extension.toLowerCase().equals("mp4") || extension.toLowerCase().equals("avi") || extension.toLowerCase().equals("mov") || 
 							extension.toLowerCase().equals("mkv") || extension.toLowerCase().equals("mov") || extension.toLowerCase().equals("ogv") || 

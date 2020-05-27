@@ -23,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import org.swampsoft.carstereo.CarStereo;
 
@@ -45,11 +46,15 @@ public class PlaylistScreen {
 	JButton minusButton;
 	JButton shuffleButton;
 	JButton clearAllButton;
+	JButton moveUpButton;
+	JButton moveDownButton;
 	
 	BufferedImage backButtonImage;
 	BufferedImage minusButtonImage;
 	BufferedImage shuffleButtonImage;
 	BufferedImage clearAllButtonImage;
+	BufferedImage upButtonImage;
+	BufferedImage downButtonImage;
 	
 	MP3Screen mp3Screen;
 	
@@ -74,8 +79,8 @@ public class PlaylistScreen {
 		labelTitle.setFont(fontBig);
 		labelTitle.setSize(350, 45);
 		labelTitle.setHorizontalAlignment(JLabel.CENTER);
-		labelTitle.setBounds(screenWidth/2-labelTitle.getWidth()/2, screenHeight/10, labelTitle.getWidth(), labelTitle.getHeight());
-		
+		labelTitle.setBounds(screenWidth/2-labelTitle.getWidth()/2, screenHeight/11, labelTitle.getWidth(), labelTitle.getHeight());
+
 		try {
 			backButtonImage = ImageIO.read(getClass().getResource("/images/back-small.png"));
 		} catch (IOException e) {
@@ -90,7 +95,33 @@ public class PlaylistScreen {
 		backButton.setBounds(screenWidth/2-backButton.getWidth()/2, screenHeight - 120, backButton.getWidth(), backButton.getHeight());
 		
 		try {
-			minusButtonImage = ImageIO.read(getClass().getResource("/images/minus-small.png"));
+			upButtonImage = ImageIO.read(getClass().getResource("/images/up-arrow-smaller.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		moveUpButton = new JButton(new ImageIcon(upButtonImage));
+		moveUpButton.setBackground(Color.BLACK);
+		//moveUpButton.setForeground(Color.WHITE);
+		moveUpButton.setBorder(BorderFactory.createEmptyBorder());
+		moveUpButton.setSize(100, 100);
+		moveUpButton.setBounds(screenWidth-100-moveUpButton.getWidth()/2, screenHeight/6*1-moveUpButton.getHeight()/2, moveUpButton.getWidth(), moveUpButton.getHeight());
+		
+		try {
+			downButtonImage = ImageIO.read(getClass().getResource("/images/down-arrow-smaller.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		moveDownButton = new JButton(new ImageIcon(downButtonImage));
+		moveDownButton.setBackground(Color.BLACK);
+		//moveDownButton.setForeground(Color.WHITE);
+		moveDownButton.setBorder(BorderFactory.createEmptyBorder());
+		moveDownButton.setSize(100, 100);
+		moveDownButton.setBounds(screenWidth-100-moveDownButton.getWidth()/2, screenHeight/6*2-moveDownButton.getHeight()/2, moveDownButton.getWidth(), moveDownButton.getHeight());
+		
+		try {
+			minusButtonImage = ImageIO.read(getClass().getResource("/images/minus-smaller.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -98,10 +129,11 @@ public class PlaylistScreen {
 		minusButton.setBackground(Color.BLACK);
 		minusButton.setSize(100, 100);
 		minusButton.setBorder(BorderFactory.createEmptyBorder());
-		minusButton.setBounds(screenWidth-100-minusButton.getWidth()/2, screenHeight/2-minusButton.getHeight()/2, minusButton.getWidth(), minusButton.getHeight());
+		//minusButton.setBounds(screenWidth-100-minusButton.getWidth()/2, screenHeight/2-minusButton.getHeight()/2, minusButton.getWidth(), minusButton.getHeight());
+		minusButton.setBounds(screenWidth-100-minusButton.getWidth()/2, screenHeight/6*3-minusButton.getHeight()/2, minusButton.getWidth(), minusButton.getHeight());
 		
 		try {
-			shuffleButtonImage = ImageIO.read(getClass().getResource("/images/shuffle-small.png"));
+			shuffleButtonImage = ImageIO.read(getClass().getResource("/images/shuffle-smaller.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -109,10 +141,11 @@ public class PlaylistScreen {
 		shuffleButton.setBackground(Color.BLACK);
 		shuffleButton.setSize(100, 100);
 		shuffleButton.setBorder(BorderFactory.createEmptyBorder());
-		shuffleButton.setBounds(screenWidth-100-shuffleButton.getWidth()/2, screenHeight/4-shuffleButton.getHeight()/2, shuffleButton.getWidth(), shuffleButton.getHeight());
+		//shuffleButton.setBounds(screenWidth-100-shuffleButton.getWidth()/2, screenHeight/4-shuffleButton.getHeight()/2, shuffleButton.getWidth(), shuffleButton.getHeight());
+		shuffleButton.setBounds(screenWidth-100-shuffleButton.getWidth()/2, screenHeight/6*4-shuffleButton.getHeight()/2, shuffleButton.getWidth(), shuffleButton.getHeight());
 
 		try {
-			clearAllButtonImage = ImageIO.read(getClass().getResource("/images/cancel-small.png"));
+			clearAllButtonImage = ImageIO.read(getClass().getResource("/images/cancel-smaller.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +153,8 @@ public class PlaylistScreen {
 		clearAllButton.setBackground(Color.BLACK);
 		clearAllButton.setSize(100, 100);
 		clearAllButton.setBorder(BorderFactory.createEmptyBorder());
-		clearAllButton.setBounds(screenWidth-100-clearAllButton.getWidth()/2, screenHeight/2+clearAllButton.getHeight()-clearAllButton.getHeight()/4, clearAllButton.getWidth(), clearAllButton.getHeight());
+		//clearAllButton.setBounds(screenWidth-100-clearAllButton.getWidth()/2, screenHeight/2+clearAllButton.getHeight()-clearAllButton.getHeight()/4, clearAllButton.getWidth(), clearAllButton.getHeight());
+		clearAllButton.setBounds(screenWidth-100-clearAllButton.getWidth()/2, screenHeight/6*5-clearAllButton.getHeight()/2, clearAllButton.getWidth(), clearAllButton.getHeight());
 		
 		playlistCopy = new ArrayList(CarStereo.mediaPlaylist);
 		
@@ -146,8 +180,32 @@ public class PlaylistScreen {
 		scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		scrollPane.getViewport().setViewPosition(new Point(0, 0));
 		scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
-		scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createEmptyBorder());
+		//scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+					this.thumbColor = Color.WHITE;
+			}
+			@Override
+	        protected JButton createDecreaseButton(int orientation) {
+	            return createHiddenButton();
+	        }
+
+	        @Override    
+	        protected JButton createIncreaseButton(int orientation) {
+	            return createHiddenButton();
+	        }
+	        
+	        private JButton createHiddenButton() {
+	            JButton jbutton = new JButton();
+	            jbutton.setPreferredSize(new Dimension(0, 0));
+	            jbutton.setMinimumSize(new Dimension(0, 0));
+	            jbutton.setMaximumSize(new Dimension(0, 0));
+	            return jbutton;
+	        }
+		});
 		
 		panel.add(backButton);
 		panel.add(labelTitle);
@@ -155,6 +213,8 @@ public class PlaylistScreen {
 		panel.add(minusButton);
 		panel.add(shuffleButton);
 		panel.add(clearAllButton);
+		panel.add(moveUpButton);
+		panel.add(moveDownButton);
 		
 		frame.add(panel);
 		frame.setSize(screenWidth, screenHeight);
@@ -172,6 +232,28 @@ public class PlaylistScreen {
 				//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 			
+		});
+		
+		moveUpButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if (list.getSelectedIndex() >= 1){// equal or greater than 1 so can't move the first (0)
+					int selected = list.getSelectedIndex();
+					Collections.swap(CarStereo.mediaPlaylist, list.getSelectedIndex(), list.getSelectedIndex() - 1);
+					refreshList();
+					list.setSelectedIndex(selected - 1);
+				}
+			}
+		});
+		
+		moveDownButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if (list.getSelectedIndex() >= 0 && list.getSelectedIndex() < CarStereo.mediaPlaylist.size()){
+					int selected = list.getSelectedIndex();
+					Collections.swap(CarStereo.mediaPlaylist, list.getSelectedIndex(), list.getSelectedIndex() + 1);
+					refreshList();
+					list.setSelectedIndex(selected + 1);
+				}
+			}
 		});
 		
 		minusButton.addActionListener(new ActionListener(){
