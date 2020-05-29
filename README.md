@@ -3,7 +3,7 @@ RasPiCarStereo is an app that turns a Raspberry Pi 2 or 3 (maybe 1 too) into a c
 
 It's still being worked on, but most everything works. The bluetooth stuff could be done better. Some bluetooth stuff is broken, but it should be able to pair a new device. It can connect to devices that have already been paired fine.
 
-For more info and instructions:
+For more info, screenshots and instructions:
 http://www.swampsoft.org/raspberrypi/RasPiCarStereo/RasPiCarStereo.php
 
 To use the stereo should be pretty straight forward, mostly. To change a radio station preset thats already set, press and hold for a second then let go. If there is no station set yet, just a regular tap will do. The MP3 player is set up like a juke box. To play a song, find it on the list and press the play button. To add a song to the play list, select the song on the list and press the add button. If there is no song playing, the add button will play the song instead. Currently playing songs are not listed on the playlist. To view the playlist, press the playlist button. You can also shuffle the list and remove songs here too. If there is no songs on the list, the playlist button wont do anything. In the playlist, if the play button is pressed while a song is playing, it will stop the song and play the new one while keeping the playlist if there is one. I plan on adding support for M3U playlists so you can add or play a list the same way you would an individual file.
