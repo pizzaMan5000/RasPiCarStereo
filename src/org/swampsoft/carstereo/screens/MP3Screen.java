@@ -365,7 +365,7 @@ public class MP3Screen {
 					String path = "/images/music-tiny.png"; 
 					
 					//System.out.println("Get File:" + extension);
-					if (extension.toLowerCase().equals("mp4") || extension.toLowerCase().equals("avi") || extension.toLowerCase().equals("mov") || 
+					if (extension.toLowerCase().equals("mp4") || extension.toLowerCase().equals("avi") || extension.toLowerCase().equals("m4v") || 
 							extension.toLowerCase().equals("mkv") || extension.toLowerCase().equals("mov") || extension.toLowerCase().equals("ogv") || 
 							extension.toLowerCase().equals("mpeg") || extension.toLowerCase().equals("wmv") || extension.toLowerCase().equals("webm")){
 						path = "/images/video-tiny.png";
@@ -420,6 +420,9 @@ public class MP3Screen {
 					if (playFile.contains(".")) {
 						fileExtension = playFile.substring(playFile.lastIndexOf(".")+1);
 						if (fileExtension.toLowerCase().equals("mp4")){
+							isVideo = true;
+							CarStereo.fullScreenControls = new FullScreenControls(tempScreen, mainScreen);
+						} else if (fileExtension.toLowerCase().equals("m4v")){
 							isVideo = true;
 							CarStereo.fullScreenControls = new FullScreenControls(tempScreen, mainScreen);
 						} else if (fileExtension.toLowerCase().equals("avi")){
