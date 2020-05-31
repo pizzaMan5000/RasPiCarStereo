@@ -12,20 +12,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Properties;
-
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.LocalDevice;
 
 import org.swampsoft.carstereo.screens.MainScreen;
 import org.swampsoft.carstereo.screens.FullScreenControls;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class CarStereo {
