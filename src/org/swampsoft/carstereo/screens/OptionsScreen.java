@@ -28,15 +28,19 @@ public class OptionsScreen {
 	//JLabel labelTitle;
 	JLabel labelReboot;
 	JLabel labelShutdown;
+	JLabel labelFileManager;
+	JLabel labelExit;
 	JButton backButton;
 	JButton rebootButton;
 	JButton shutdownButton;
 	JButton fileManagerButton;
+	JButton exitButton;
 	
 	BufferedImage backButtonImage;
 	BufferedImage rebootButtonImage;
 	BufferedImage shutdownButtonImage;
 	BufferedImage fileManagerIcon;
+	BufferedImage exitIcon;
 	
 	Process fileManagerProcess;
 	
@@ -70,14 +74,28 @@ public class OptionsScreen {
 		labelReboot.setFont(font);
 		labelReboot.setSize(180, 30);
 		labelReboot.setHorizontalAlignment(JLabel.CENTER);
-		labelReboot.setBounds(screenWidth/5-labelReboot.getWidth()/2, screenHeight/5*3, labelReboot.getWidth(), labelReboot.getHeight());
+		labelReboot.setBounds(screenWidth/6-labelReboot.getWidth()/2, screenHeight/5*3-40, labelReboot.getWidth(), labelReboot.getHeight());
 
 		labelShutdown = new JLabel("Shutdown");
 		labelShutdown.setForeground(Color.WHITE);
 		labelShutdown.setFont(font);
 		labelShutdown.setSize(180, 30);
 		labelShutdown.setHorizontalAlignment(JLabel.CENTER);
-		labelShutdown.setBounds(screenWidth/5*4-labelShutdown.getWidth()/2, screenHeight/5*3, labelShutdown.getWidth(), labelShutdown.getHeight());
+		labelShutdown.setBounds(screenWidth/6*5-labelShutdown.getWidth()/2, screenHeight/5*3-40, labelShutdown.getWidth(), labelShutdown.getHeight());
+		
+		labelFileManager = new JLabel("File Manager");
+		labelFileManager.setForeground(Color.WHITE);
+		labelFileManager.setFont(font);
+		labelFileManager.setSize(180, 32);
+		labelFileManager.setHorizontalAlignment(JLabel.CENTER);
+		labelFileManager.setBounds((int)(screenWidth/6*2.33)-labelFileManager.getWidth()/2, screenHeight/5*3-40, labelFileManager.getWidth(), labelFileManager.getHeight());
+		
+		labelExit = new JLabel("Close App");
+		labelExit.setForeground(Color.WHITE);
+		labelExit.setFont(font);
+		labelExit.setSize(180, 32);
+		labelExit.setHorizontalAlignment(JLabel.CENTER);
+		labelExit.setBounds((int)(screenWidth/6*3.66)-labelExit.getWidth()/2, screenHeight/5*3-40, labelExit.getWidth(), labelExit.getHeight());
 		
 		try {
 			backButtonImage = ImageIO.read(getClass().getResource("/images/back-small.png"));
@@ -93,7 +111,7 @@ public class OptionsScreen {
 		backButton.setBounds(screenWidth/2-backButton.getWidth()/2, screenHeight - 120, backButton.getWidth(), backButton.getHeight());
 		
 		try {
-			rebootButtonImage = ImageIO.read(getClass().getResource("/images/reboot.png"));
+			rebootButtonImage = ImageIO.read(getClass().getResource("/images/reboot-small.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,10 +121,10 @@ public class OptionsScreen {
 		//backButton.setForeground(Color.WHITE);
 		rebootButton.setBorder(BorderFactory.createEmptyBorder());
 		rebootButton.setSize(128, 128);
-		rebootButton.setBounds(screenWidth/5-rebootButton.getWidth()/2, screenHeight/4, rebootButton.getWidth(), rebootButton.getHeight());
+		rebootButton.setBounds(screenWidth/6-rebootButton.getWidth()/2, screenHeight/4, rebootButton.getWidth(), rebootButton.getHeight());
 
 		try {
-			shutdownButtonImage = ImageIO.read(getClass().getResource("/images/power.png"));
+			shutdownButtonImage = ImageIO.read(getClass().getResource("/images/power-small.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,11 +134,10 @@ public class OptionsScreen {
 		//backButton.setForeground(Color.WHITE);
 		shutdownButton.setBorder(BorderFactory.createEmptyBorder());
 		shutdownButton.setSize(128, 128);
-		shutdownButton.setBounds(screenWidth/5*4-shutdownButton.getWidth()/2, screenHeight/4, shutdownButton.getWidth(), shutdownButton.getHeight());
+		shutdownButton.setBounds(screenWidth/6*5-shutdownButton.getWidth()/2, screenHeight/4, shutdownButton.getWidth(), shutdownButton.getHeight());
 		
-
 		try {
-			fileManagerIcon = ImageIO.read(getClass().getResource("/images/folder.png"));
+			fileManagerIcon = ImageIO.read(getClass().getResource("/images/folder-small.png"));
 			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -131,16 +148,35 @@ public class OptionsScreen {
 		fileManagerButton.setBorder(BorderFactory.createEmptyBorder());
 		//fileManagerButton.setText("File Manager");
 		fileManagerButton.setSize(128,128);
-		fileManagerButton.setBounds((int)(screenWidth/5*2.5)-fileManagerButton.getWidth()/2, screenHeight/4, fileManagerButton.getWidth(), fileManagerButton.getHeight());
+		fileManagerButton.setBounds((int)(screenWidth/6*2.33)-fileManagerButton.getWidth()/2, screenHeight/4, fileManagerButton.getWidth(), fileManagerButton.getHeight());
 		
+		try {
+			exitIcon = ImageIO.read(getClass().getResource("/images/cancel-small.png"));
+			//navigationIcon = ImageIO.read(new File("images/navigation.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		exitButton = new JButton(new ImageIcon(exitIcon));
+		exitButton.setFont(font);
+		//exitButton.setText("x");
+		exitButton.setBackground(Color.BLACK);
+		//exitButton.setForeground(Color.WHITE);
+		exitButton.setBorder(BorderFactory.createEmptyBorder());
+		//exitButton.setToolTipText("EXIT");
+		exitButton.setSize(128,128);
+		exitButton.setBounds((int)(screenWidth/6*3.66)-exitButton.getWidth()/2, screenHeight/4, exitButton.getWidth(), exitButton.getHeight());
 		
 		//panel.add(labelTitle);
 		panel.add(labelReboot);
 		panel.add(labelShutdown);
+		panel.add(labelFileManager);
+		panel.add(labelExit);
 		panel.add(backButton);
 		panel.add(rebootButton);
 		panel.add(shutdownButton);
 		panel.add(fileManagerButton);
+		panel.add(exitButton);
 		
 		frame.add(panel);
 		frame.setSize(screenWidth, screenHeight);
@@ -202,6 +238,18 @@ public class OptionsScreen {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			
+		});
+		
+		exitButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				// kill processes
+				CarStereo.killAllProcesses();
+				
+				// EXIT EVERYTHING
+				System.exit(0);
 			}
 			
 		});

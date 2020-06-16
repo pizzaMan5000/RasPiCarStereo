@@ -1,35 +1,23 @@
 package org.swampsoft.carstereo.screens;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.LocalDevice;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -59,7 +47,7 @@ public class MainScreen {
 	JButton playPauseButton;
 	JButton nextTrackButton;
 	
-	JButton exitButton; // TODO remove or hide when done
+	//JButton exitButton; // TODO remove or hide when done
 	
 	BufferedImage radioIcon;
 	BufferedImage navigationIcon;
@@ -133,6 +121,7 @@ public class MainScreen {
 		labelInfo2.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());
 		
+		/*
 		exitButton = new JButton();
 		exitButton.setFont(font2);
 		exitButton.setText("x");
@@ -141,7 +130,8 @@ public class MainScreen {
 		exitButton.setBorder(BorderFactory.createEmptyBorder());
 		//exitButton.setToolTipText("EXIT");
 		exitButton.setSize(50, 40);
-		exitButton.setBounds(screenWidth/2-exitButton.getWidth()/2, screenHeight - 70, exitButton.getWidth(), exitButton.getHeight());		 
+		exitButton.setBounds(screenWidth/2-exitButton.getWidth()/2, screenHeight - 70, exitButton.getWidth(), exitButton.getHeight());
+		*/		 
 		
 		try {
 			radioIcon = ImageIO.read(getClass().getResource("/images/radio-small.png"));
@@ -249,7 +239,7 @@ public class MainScreen {
 		nextTrackButton.setVisible(false);
 		
 		panel.add(labelTime);
-		panel.add(exitButton);
+		//panel.add(exitButton);
 		panel.add(radioButton);
 		panel.add(navigationButton);
 		panel.add(bluetoothButton);
@@ -475,6 +465,8 @@ public class MainScreen {
 	}
 	
 	void loadButtonlisteners(){
+		
+		/*
 		exitButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -485,7 +477,7 @@ public class MainScreen {
 				System.exit(0);
 			}
 			
-		});
+		}); */
 		
 		radioButton.addActionListener(new ActionListener(){
 
