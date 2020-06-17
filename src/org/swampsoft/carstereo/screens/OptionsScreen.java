@@ -233,7 +233,7 @@ public class OptionsScreen {
 			public void actionPerformed(ActionEvent arg0) {
 				// filemanager button pressed
 				try {
-					fileManagerProcess = Runtime.getRuntime().exec("pcmanfm --no-desktop ~/Media");
+					fileManagerProcess = Runtime.getRuntime().exec("pcmanfm --no-desktop");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
