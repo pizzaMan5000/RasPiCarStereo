@@ -23,6 +23,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -314,7 +317,17 @@ public class MP3Screen {
 		//file=new File(MEDIA_FOLDER_PATH);
 		allSubFiles=file.listFiles();
 		
-		Arrays.sort(allSubFiles);
+		Arrays.sort(allSubFiles, new Comparator<File>() {
+		    public int compare(File f1, File f2) {
+		    	int file1 = Integer.parseInt("0" + f1.getName().replaceAll("[^0-9]", ""));
+		    	int file2 = Integer.parseInt("0" + f2.getName().replaceAll("[^0-9]", ""));
+		    	
+		    	int compared = Integer.compare(file1, file2);
+		    	System.out.println("Compared = " + compared);
+		    	
+		        return compared;
+		    }
+		});
 		
 		int counter = 0;
 		
@@ -655,6 +668,7 @@ public class MP3Screen {
 		}
 		if (list.getSelectedIndex() >= 0){
 			if (fileTypeList.get(list.getSelectedIndex()) == 0){
+				// IF file type is file not folder
 				if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
 					// if mp3 thread is not playing
 					if (allSubFiles[list.getSelectedIndex()].getName().endsWith("m3u")){
@@ -675,6 +689,20 @@ public class MP3Screen {
 				// if selected is a folder, then add the contents, but not of folders inside it
 				File tempFile = allSubFiles[list.getSelectedIndex()];
 				File[] tempList = tempFile.listFiles();
+				
+				// Sort file list
+				Arrays.sort(tempList, new Comparator<File>() {
+				    public int compare(File f1, File f2) {
+				    	int file1 = Integer.parseInt("0" + f1.getName().replaceAll("[^0-9]", ""));
+				    	int file2 = Integer.parseInt("0" + f2.getName().replaceAll("[^0-9]", ""));
+				    	
+				    	int compared = Integer.compare(file1, file2);
+				    	System.out.println("Compared = " + compared);
+				    	
+				        return compared;
+				    }
+				});
+				
 				for (int i = 0; i < tempList.length; i++){
 					if (tempList[i].isFile() && !tempList[i].getName().endsWith("m3u")){
 						if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
