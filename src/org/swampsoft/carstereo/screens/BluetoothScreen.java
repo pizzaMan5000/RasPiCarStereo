@@ -44,7 +44,8 @@ public class BluetoothScreen {
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 30);
 		
 		frame = new JFrame("Bluetooth Options");
 		frame.setBackground(Color.BLACK);
@@ -115,7 +116,7 @@ public class BluetoothScreen {
 		unpairButton.setBackground(Color.BLACK);
 		unpairButton.setForeground(Color.WHITE);
 		//pairedButton.setBorder(BorderFactory.createEmptyBorder());
-		unpairButton.setSize(210, 35);
+		unpairButton.setSize(250, 35);
 		unpairButton.setBounds(screenWidth/5*4-unpairButton.getWidth()/2, screenHeight/6*4, unpairButton.getWidth(), unpairButton.getHeight());
 		
 		panel.add(labelTitle);

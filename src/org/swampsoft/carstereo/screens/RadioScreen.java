@@ -58,7 +58,8 @@ public class RadioScreen {
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 30);
 		
 		frame = new JFrame("FM Radio");
 		frame.setBackground(Color.BLACK);
@@ -71,7 +72,7 @@ public class RadioScreen {
 		label = new JLabel("FM Radio");
 		label.setForeground(Color.WHITE);
 		label.setFont(font);
-		label.setSize(180, 20);
+		label.setSize(180, 25);
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBounds(screenWidth/2-label.getWidth()/2, screenHeight/15, label.getWidth(), label.getHeight());
 		
@@ -239,10 +240,6 @@ public class RadioScreen {
 		backButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				//System.exit(0);
-				//frame.dispose();
-				//CarStereo.device.setFullScreenWindow(mainScreen.frame);
-				//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				closeThisWindow();
 			}
 			
@@ -269,7 +266,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 1);
 				} else {
-					if (CarStereo.fm1 != "" && CarStereo.fm1 != null){
+					if (CarStereo.fm1 != "" && CarStereo.fm1 != null && CarStereo.fm1.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm1);
@@ -303,7 +300,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 2);
 				} else {
-					if (CarStereo.fm2 != "" && CarStereo.fm2 != null){
+					if (CarStereo.fm2 != "" && CarStereo.fm2 != null && CarStereo.fm2.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm2);
@@ -337,7 +334,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 3);
 				} else {
-					if (CarStereo.fm3 != "" && CarStereo.fm3 != null){
+					if (CarStereo.fm3 != "" && CarStereo.fm3 != null && CarStereo.fm3.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm3);
@@ -371,7 +368,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 4);
 				} else {
-					if (CarStereo.fm4 != "" && CarStereo.fm4 != null){
+					if (CarStereo.fm4 != "" && CarStereo.fm4 != null && CarStereo.fm4.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm4);
@@ -405,7 +402,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 5);
 				} else {
-					if (CarStereo.fm5 != "" && CarStereo.fm5 != null){
+					if (CarStereo.fm5 != "" && CarStereo.fm5 != null && CarStereo.fm5.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm5);
@@ -439,7 +436,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 6);
 				} else {
-					if (CarStereo.fm6 != "" && CarStereo.fm6 != null){
+					if (CarStereo.fm6 != "" && CarStereo.fm6 != null && CarStereo.fm6.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm6);
@@ -473,7 +470,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 7);
 				} else {
-					if (CarStereo.fm7 != "" && CarStereo.fm7 != null){
+					if (CarStereo.fm7 != "" && CarStereo.fm7 != null && CarStereo.fm7.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm7);
@@ -507,7 +504,7 @@ public class RadioScreen {
 					// set station ****
 					new RadioFrequencyChooserScreen(mainScreen, 8);
 				} else {
-					if (CarStereo.fm8 != "" && CarStereo.fm8 != null){
+					if (CarStereo.fm8 != "" && CarStereo.fm8 != null && CarStereo.fm8.length() > 0){
 						CarStereo.killAllProcesses();
 						closeThisWindow();
 						startRadio(CarStereo.fm8);
@@ -522,8 +519,9 @@ public class RadioScreen {
 	}
 	
 	void startRadio(String radioFrequency){
-		CarStereo.killAllProcesses();
+		if (CarStereo.debug) System.out.println("RadioScreen: Radio frequency selected and starting radio...");
 		CarStereo.lastRadioStation = radioFrequency;
+		CarStereo.wasUsingRadioLastTime = true;
 		String[] command = {"/bin/sh", "-c", "rtl_fm -f "+CarStereo.lastRadioStation+"M -s 171000 -g 30 -F 9 | redsea -u -e | aplay -r 171000 -f S16_LE"};
 		CarStereo.infoText1 = "FM "+CarStereo.lastRadioStation+" MHz";
 		CarStereo.infoText2 = "Radio";
@@ -534,6 +532,7 @@ public class RadioScreen {
 	}
 	
 	void closeThisWindow(){
+		if (CarStereo.debug) System.out.println("RadioScreen: closed screen");
 		frame.dispose();
 		CarStereo.device.setFullScreenWindow(mainScreen.frame);
 	}

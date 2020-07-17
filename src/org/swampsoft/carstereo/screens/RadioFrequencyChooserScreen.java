@@ -52,18 +52,20 @@ public class RadioFrequencyChooserScreen {
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
 		frequency = 980;
-		if (buttonNumber == 1 && CarStereo.fm1 != null && CarStereo.fm1 != "") frequency = (int)(Double.parseDouble(CarStereo.fm1) * 10);
-		if (buttonNumber == 2 && CarStereo.fm2 != null && CarStereo.fm2 != "") frequency = (int)(Double.parseDouble(CarStereo.fm2) * 10);
-		if (buttonNumber == 3 && CarStereo.fm3 != null && CarStereo.fm3 != "") frequency = (int)(Double.parseDouble(CarStereo.fm3) * 10);
-		if (buttonNumber == 4 && CarStereo.fm4 != null && CarStereo.fm4 != "") frequency = (int)(Double.parseDouble(CarStereo.fm4) * 10);
-		if (buttonNumber == 5 && CarStereo.fm5 != null && CarStereo.fm5 != "") frequency = (int)(Double.parseDouble(CarStereo.fm5) * 10);
-		if (buttonNumber == 6 && CarStereo.fm6 != null && CarStereo.fm6 != "") frequency = (int)(Double.parseDouble(CarStereo.fm6) * 10);
-		if (buttonNumber == 7 && CarStereo.fm7 != null && CarStereo.fm7 != "") frequency = (int)(Double.parseDouble(CarStereo.fm7) * 10);
-		if (buttonNumber == 8 && CarStereo.fm8 != null && CarStereo.fm8 != "") frequency = (int)(Double.parseDouble(CarStereo.fm8) * 10);
+		if (buttonNumber == 1 && CarStereo.fm1 != null && CarStereo.fm1 != "" && CarStereo.fm1.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm1) * 10);
+		if (buttonNumber == 2 && CarStereo.fm2 != null && CarStereo.fm2 != "" && CarStereo.fm2.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm2) * 10);
+		if (buttonNumber == 3 && CarStereo.fm3 != null && CarStereo.fm3 != "" && CarStereo.fm3.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm3) * 10);
+		if (buttonNumber == 4 && CarStereo.fm4 != null && CarStereo.fm4 != "" && CarStereo.fm4.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm4) * 10);
+		if (buttonNumber == 5 && CarStereo.fm5 != null && CarStereo.fm5 != "" && CarStereo.fm5.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm5) * 10);
+		if (buttonNumber == 6 && CarStereo.fm6 != null && CarStereo.fm6 != "" && CarStereo.fm6.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm6) * 10);
+		if (buttonNumber == 7 && CarStereo.fm7 != null && CarStereo.fm7 != "" && CarStereo.fm7.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm7) * 10);
+		if (buttonNumber == 8 && CarStereo.fm8 != null && CarStereo.fm8 != "" && CarStereo.fm8.length() > 0) frequency = (int)(Double.parseDouble(CarStereo.fm8) * 10);
 		
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
-		Font font2 = new Font("TimesRoman", Font.PLAIN, 60);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font font2 = new Font("TimesRoman", Font.PLAIN, 60);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 30);
+		Font font2 = new Font("RobotoCondensed", Font.PLAIN, 60);
 		
 		frame = new JFrame("FM Radio Chooser");
 		frame.setBackground(Color.BLACK);
@@ -76,14 +78,14 @@ public class RadioFrequencyChooserScreen {
 		labelTitle = new JLabel("Select an FM Frequency");
 		labelTitle.setForeground(Color.WHITE);
 		labelTitle.setFont(font);
-		labelTitle.setSize(350, 30);
+		labelTitle.setSize(450, 30);
 		labelTitle.setHorizontalAlignment(JLabel.CENTER);
 		labelTitle.setBounds(screenWidth/2-labelTitle.getWidth()/2, screenHeight/15, labelTitle.getWidth(), labelTitle.getHeight());
 		
 		labelFrequency = new JLabel("FM "+frequency/10+"."+frequency%10+" MHz");
 		labelFrequency.setForeground(Color.WHITE);
 		labelFrequency.setFont(font2);
-		labelFrequency.setSize(400, 50);
+		labelFrequency.setSize(500, 50);
 		labelFrequency.setHorizontalAlignment(JLabel.CENTER);
 		labelFrequency.setBounds(screenWidth/2-labelFrequency.getWidth()/2, screenHeight/15*3, labelFrequency.getWidth(), labelFrequency.getHeight());
 		

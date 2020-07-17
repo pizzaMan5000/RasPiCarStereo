@@ -86,9 +86,11 @@ public class MP3Screen {
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 30);
 		
 		MEDIA_FOLDER_PATH=System.getProperty("user.home")+"/Media";
+		//MEDIA_FOLDER_PATH="/home/pi/Media";
 		file=new File(MEDIA_FOLDER_PATH);
 		MEDIA_FOLDER_PATH_ABSOLUTE = file.getAbsolutePath();
 		
@@ -184,8 +186,8 @@ public class MP3Screen {
 		//list.setBounds(50,100,list.getWidth(), list.getHeight());
 		list.setSelectedIndex(0);
 		
-		if (fileTypeList.get(list.getSelectedIndex()) == 0) playButton.setIcon(new ImageIcon(playButtonIcon));
-		else if (fileTypeList.get(list.getSelectedIndex()) == 1) playButton.setIcon(new ImageIcon(folderOpenIcon));
+		playButton.setIcon(new ImageIcon(playButtonIcon));
+		if (fileTypeList.get(list.getSelectedIndex()) == 1) playButton.setIcon(new ImageIcon(folderOpenIcon));
 		else if (fileTypeList.get(list.getSelectedIndex()) == 2) playButton.setIcon(new ImageIcon(upOneLevelIcon));
 		
 		scrollPane = new JScrollPane(list);
@@ -194,7 +196,7 @@ public class MP3Screen {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(40,0));
-		scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+		//scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT); // moves scroll bar to left side of list
 		scrollPane.getViewport().setViewPosition(new Point(0, 0));
 		scrollPane.getVerticalScrollBar().setBackground(Color.BLACK);
 		//scrollPane.getVerticalScrollBar().setBorder(BorderFactory.createEmptyBorder());
@@ -223,6 +225,7 @@ public class MP3Screen {
 	        }
 		});
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.getViewport().setViewPosition(new Point(0,0)); // scroll all the way to the left
 		
 		panel.add(label);
 		panel.add(backButton);
@@ -245,7 +248,6 @@ public class MP3Screen {
 		backButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				//System.exit(0);
 				frame.dispose();
 				CarStereo.device.setFullScreenWindow(mainScreen.frame);
 				//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
@@ -281,7 +283,7 @@ public class MP3Screen {
 		list.addMouseListener(new MouseAdapter(){
 			
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("Selected: " + list.getSelectedIndex());
+				//System.out.println("Selected: " + list.getSelectedIndex());
 				
 				if (fileTypeList.get(list.getSelectedIndex()) == 0) {
 					// file
@@ -296,7 +298,7 @@ public class MP3Screen {
 				if (System.currentTimeMillis() - listClickTime < 900){
 					if (Math.abs(e.getX() - lastClickedPoint.getX()) < 50 && Math.abs(e.getY() - lastClickedPoint.getY()) < 50){
 						// list was double clicked
-						System.out.println("Double Clicked: " + list.getSelectedIndex());
+						//System.out.println("Double Clicked: " + list.getSelectedIndex());
 						if (fileTypeList.get(list.getSelectedIndex()) == 1) {
 							openSelectedFolder();
 						} else if (fileTypeList.get(list.getSelectedIndex()) == 2) {
@@ -314,20 +316,24 @@ public class MP3Screen {
 	
 	void getFileList(File file, boolean showBackOption){
 		
+		if (CarStereo.debug) System.out.println("MP3Screen: Getting file list...");
+		
 		//file=new File(MEDIA_FOLDER_PATH);
 		allSubFiles=file.listFiles();
 		
-		Arrays.sort(allSubFiles, new Comparator<File>() {
-		    public int compare(File f1, File f2) {
-		    	int file1 = Integer.parseInt("0" + f1.getName().replaceAll("[^0-9]", ""));
-		    	int file2 = Integer.parseInt("0" + f2.getName().replaceAll("[^0-9]", ""));
+		if (allSubFiles != null) {
+			Arrays.sort(allSubFiles, new Comparator<File>() {
+				public int compare(File f1, File f2) {
+					int file1 = Integer.parseInt("0" + f1.getName().replaceAll("[^0-9]", ""));
+					int file2 = Integer.parseInt("0" + f2.getName().replaceAll("[^0-9]", ""));
 		    	
-		    	int compared = Integer.compare(file1, file2);
-		    	System.out.println("Compared = " + compared);
+					int compared = Integer.compare(file1, file2);
+					//System.out.println("Compared = " + compared);
 		    	
-		        return compared;
-		    }
-		});
+					return compared;
+				}
+			});
+		}
 		
 		int counter = 0;
 		
@@ -378,6 +384,8 @@ public class MP3Screen {
 					String path = "/images/music-tiny.png"; 
 					
 					//System.out.println("Get File:" + extension);
+					
+					// if extension is movie or m3u file, then change icon
 					if (extension.toLowerCase().equals("mp4") || extension.toLowerCase().equals("avi") || extension.toLowerCase().equals("m4v") || 
 							extension.toLowerCase().equals("mkv") || extension.toLowerCase().equals("mov") || extension.toLowerCase().equals("ogv") || 
 							extension.toLowerCase().equals("mpeg") || extension.toLowerCase().equals("wmv") || extension.toLowerCase().equals("webm")){
@@ -391,8 +399,8 @@ public class MP3Screen {
 					counter++;
 				}
 			}
-		    
 		}
+		if (CarStereo.debug) System.out.println("MP3Screen: file list got");
 	}
 	
 	void playFile(){
@@ -413,19 +421,17 @@ public class MP3Screen {
 		CarStereo.playMode = 2;
 		CarStereo.mp3IsPlaying = true;
 		
-		System.out.println("CarStereo.mp3PlayerThread is NULL");
-		
 		final MP3Screen tempScreen = this; // this is so the mp3 thread can change things in the main thread 
 		
 		CarStereo.mp3PlayerThread = new Thread(){
 			public void run(){
-				System.out.println("Add to list...");
+				//System.out.println("Add to list...");
 				if (tempFile != null) addFileToPlaylist(tempFile);
 				
 				while(CarStereo.mediaPlaylist.size() > 0 && CarStereo.mp3IsPlaying){
 					//this LOOP keeps playing music until the playlist is empty
 					//System.out.println(" Playlist size = " + CarStereo.mediaPlaylist.size());
-					System.out.println("Play Thread Started");
+					if (CarStereo.debug) System.out.println("Play Thread Started");
 					playFile = CarStereo.mediaPlaylist.get(0).getAbsolutePath();
 					
 					boolean isVideo = false;
@@ -465,7 +471,7 @@ public class MP3Screen {
 						CarStereo.fullScreenControls = null;
 					}
 					
-					System.out.println("Playing: " + playFile);
+					if (CarStereo.debug) System.out.println("Playing: " + playFile);
 					playFile = "'" + playFile + "'";
 					playFile();
 					
@@ -475,6 +481,8 @@ public class MP3Screen {
 					CarStereo.mediaPlaylist.remove(0);
 					
 					// wait for song/video to finish playing and then start loop over again
+					
+					// get rid of video controls if open
 					try {
 						CarStereo.mp3Process.waitFor();
 						// remove full screen if its there
@@ -503,6 +511,7 @@ public class MP3Screen {
 	}
 	
 	void getFileInfo(){
+		if (CarStereo.debug) System.out.println("Getting file info...");
 		Thread infoThread = new Thread(){
 			public void run(){
 				Process infoProcess;
@@ -542,9 +551,11 @@ public class MP3Screen {
 			}
 		};
 		infoThread.start();
+		if (CarStereo.debug) System.out.println("File info has been got.");
 	}
 	
 	void openPlaylistScreen(){
+		if (CarStereo.debug) System.out.println("MP3Screen: Playlist button pressed");
 		new PlaylistScreen(this);
 	}
 	
@@ -582,6 +593,7 @@ public class MP3Screen {
 	}
 	
 	void playPressed(){
+		if (CarStereo.debug) System.out.println("MP3Screen: Play/Open button pressed");
 		if (list.getSelectedIndex() >= 0){
 			// check if file or folder
 			
@@ -642,7 +654,8 @@ public class MP3Screen {
 		getFileList(file, true);
 		//list.setListData(fileNameList.toArray());
 		list.setListData(fileEntry);
-		list.setSelectedIndex(0);
+		list.setSelectedIndex(0); // set to first item
+		scrollPane.getViewport().setViewPosition(new Point(0,0)); // scroll all the way to the left
 		playButton.setIcon(new ImageIcon(upOneLevelIcon));
 	}
 	
@@ -655,7 +668,8 @@ public class MP3Screen {
 		getFileList(file, showBack);
 		//list.setListData(fileNameList.toArray());
 		list.setListData(fileEntry);
-		list.setSelectedIndex(0);
+		list.setSelectedIndex(0); // set to first item
+		scrollPane.getViewport().setViewPosition(new Point(0,0)); // scroll all the way to the left
 		if (fileTypeList.get(list.getSelectedIndex()) == 0) playButton.setIcon(new ImageIcon(playButtonIcon));
 		else if (fileTypeList.get(list.getSelectedIndex()) == 1) playButton.setIcon(new ImageIcon(folderOpenIcon));
 		else if (fileTypeList.get(list.getSelectedIndex()) == 2) playButton.setIcon(new ImageIcon(upOneLevelIcon));
@@ -690,14 +704,14 @@ public class MP3Screen {
 				File tempFile = allSubFiles[list.getSelectedIndex()];
 				File[] tempList = tempFile.listFiles();
 				
-				// Sort file list
+				// Sort file list - this has mistakes sometimes, for some reason
 				Arrays.sort(tempList, new Comparator<File>() {
 				    public int compare(File f1, File f2) {
 				    	int file1 = Integer.parseInt("0" + f1.getName().replaceAll("[^0-9]", ""));
 				    	int file2 = Integer.parseInt("0" + f2.getName().replaceAll("[^0-9]", ""));
 				    	
 				    	int compared = Integer.compare(file1, file2);
-				    	System.out.println("Compared = " + compared);
+				    	//System.out.println("Compared = " + compared);
 				    	
 				        return compared;
 				    }
@@ -707,10 +721,10 @@ public class MP3Screen {
 					if (tempList[i].isFile() && !tempList[i].getName().endsWith("m3u")){
 						if (CarStereo.mp3PlayerThread == null || !CarStereo.mp3PlayerThread.isAlive()){
 							startPlayThread(tempList[i]);
-							System.out.println("Playing song...");
+							if (CarStereo.debug) System.out.println("Playing song...");
 						} else {
 							addFileToPlaylist(tempList[i]);
-							System.out.println("Added song #" + i);
+							if (CarStereo.debug) System.out.println("Added song #" + i);
 						}
 					}
 				
@@ -726,7 +740,8 @@ class CustomCellRenderer extends JLabel implements ListCellRenderer {
 	  public CustomCellRenderer() {
 	    setOpaque(true);
 	    setIconTextGap(20);
-	    setFont(new Font("TimesRoman", Font.PLAIN, 30));
+	    //setFont(new Font("TimesRoman", Font.PLAIN, 30));
+	    setFont(new Font("RobotoCondensed", Font.PLAIN, 26));
 	  }
 
 	  public Component getListCellRendererComponent(JList list, Object value,
@@ -750,6 +765,7 @@ class FileEntry {
 
 	  private final String imagePath;
 
+	  private BufferedImage bufferedImage;
 	  private ImageIcon image;
 
 	  public FileEntry(String title, String imagePath) {
@@ -764,7 +780,16 @@ class FileEntry {
 	  public ImageIcon getImage() {
 	    if (image == null) {
 	      //image = new ImageIcon(imagePath);
-	    	image = new ImageIcon(Image.class.getResource(imagePath));
+	      //image = new ImageIcon(Image.class.getResource(imagePath));
+	    	
+	    	try {
+				bufferedImage = ImageIO.read(getClass().getResource(imagePath));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	image = new ImageIcon(bufferedImage);
 	    }
 	    return image;
 	  }

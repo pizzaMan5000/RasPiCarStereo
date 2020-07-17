@@ -93,9 +93,14 @@ public class SlideDownScreen {
 	}
 	
 	void playPauseMP3(){
-		CarStereo.writer.write("p");
-		CarStereo.writer.flush();
+		try {
+			CarStereo.writer.write("p");
+			CarStereo.writer.flush();
 		//CarStereo.writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (CarStereo.mp3IsPlaying){
 			// if mp3 is already playing

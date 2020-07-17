@@ -50,7 +50,8 @@ public class OptionsScreen {
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 26);
 		
 		frame = new JFrame("Options");
 		frame.setBackground(Color.BLACK);
@@ -86,7 +87,7 @@ public class OptionsScreen {
 		labelFileManager = new JLabel("File Manager");
 		labelFileManager.setForeground(Color.WHITE);
 		labelFileManager.setFont(font);
-		labelFileManager.setSize(180, 32);
+		labelFileManager.setSize(250, 32);
 		labelFileManager.setHorizontalAlignment(JLabel.CENTER);
 		labelFileManager.setBounds((int)(screenWidth/6*2.33)-labelFileManager.getWidth()/2, screenHeight/5*3-40, labelFileManager.getWidth(), labelFileManager.getHeight());
 		

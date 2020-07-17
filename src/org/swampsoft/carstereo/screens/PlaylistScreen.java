@@ -63,8 +63,10 @@ public class PlaylistScreen {
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 30);
-		Font fontBig = new Font("TimesRoman", Font.PLAIN, 40);
+		//Font font = new Font("TimesRoman", Font.PLAIN, 30);
+		//Font fontBig = new Font("TimesRoman", Font.PLAIN, 40);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 30);
+		Font fontBig = new Font("RobotoCondensed", Font.PLAIN, 40);
 		
 		frame = new JFrame("Playlist Screen");
 		frame.setBackground(Color.BLACK);

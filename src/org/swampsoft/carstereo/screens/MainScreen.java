@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,7 +69,7 @@ public class MainScreen {
 	DateTimeFormatter monthFormatter;
 	
 	Thread guiThread;
-	Thread blueToothMonitorThread;
+	public Thread blueToothMonitorThread;
 	
 	public ArrayList<String> blueToothClientNames;
 	ArrayList<String> blueToothClientMacs;
@@ -97,13 +98,13 @@ public class MainScreen {
 		panel.setLayout(null);
 		panel.setBackground(Color.BLACK);
 		
-		Font font = new Font("TimesRoman", Font.PLAIN, 80);
-		Font font2 = new Font("TimesRoman", Font.PLAIN, 30);
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 80);
+		Font font2 = new Font("RobotoCondensed", Font.PLAIN, 30);
 		
 		labelTime = new JLabel("Car Stereo");
 		labelTime.setForeground(Color.WHITE);
 		labelTime.setFont(font);
-		labelTime.setSize(330, 100);
+		labelTime.setSize(420, 100);
 		labelTime.setHorizontalAlignment(JLabel.CENTER);
 		labelTime.setBounds(screenWidth/4-labelTime.getWidth()/2, screenHeight/8*1, labelTime.getWidth(), labelTime.getHeight());
 	
@@ -119,19 +120,7 @@ public class MainScreen {
 		labelInfo2.setFont(font2);
 		labelInfo2.setSize(450, 32);
 		labelInfo2.setHorizontalAlignment(JLabel.CENTER);
-		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());
-		
-		/*
-		exitButton = new JButton();
-		exitButton.setFont(font2);
-		exitButton.setText("x");
-		exitButton.setBackground(Color.BLACK);
-		exitButton.setForeground(Color.WHITE);
-		exitButton.setBorder(BorderFactory.createEmptyBorder());
-		//exitButton.setToolTipText("EXIT");
-		exitButton.setSize(50, 40);
-		exitButton.setBounds(screenWidth/2-exitButton.getWidth()/2, screenHeight - 70, exitButton.getWidth(), exitButton.getHeight());
-		*/		 
+		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());		 
 		
 		try {
 			radioIcon = ImageIO.read(getClass().getResource("/images/radio-small.png"));
@@ -260,16 +249,8 @@ public class MainScreen {
 		// BUTTON LISTENERS
 		loadButtonlisteners();
 		
-		// set volume
-		String command = "amixer sset Master,0 100%"; // change master volume you want here
-		try {
-			Process setVolume = Runtime.getRuntime().exec(command);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		// this thread updates all the mainScreen gui stuff
+		if (CarStereo.debug) System.out.println("Starting GUI thread...");
 		guiThread = new Thread(){
 			public void run(){
 				while(true){
@@ -329,7 +310,10 @@ public class MainScreen {
 			}
 		};
 		guiThread.start();
+		if (CarStereo.debug) System.out.println("GUI thread started");
 		
+		// this thread starts a bluetooth listener to see when someone connects and disconnects
+		if (CarStereo.debug) System.out.println("Starting bluetooth thread...");
 		blueToothMonitorThread = new Thread(){
 			public void run(){
 				try {
@@ -351,9 +335,30 @@ public class MainScreen {
 						blueToothClientConnStatus = new ArrayList<Boolean>();
 					}
 					
-					// turn of bluetooth discovery
+					// get devices list from bluetoothctl
+					blueToothWriter.write("devices" + System.lineSeparator());
+					blueToothWriter.flush();
+					inputText = "";
+					boolean keepLooping = true;
+					if (CarStereo.debug) System.out.println("Saved Bluetooth Device List:");
+					while (keepLooping) {
+						inputText = br.readLine();
+						if (inputText.contains("Device")) {
+							blueToothClientNames.add(inputText.substring(inputText.lastIndexOf(" ") + 1));
+							blueToothClientMacs.add(inputText.substring(inputText.indexOf(" ") + 1, 17));
+							blueToothClientConnStatus.add(false);
+							if (CarStereo.debug) System.out.println("" + inputText);
+						} else {
+							keepLooping = false;
+						}
+						
+					}
+					if (CarStereo.debug) System.out.println("End List");
+					
+					// turn on bluetooth discovery
 					blueToothWriter.write("discoverable on" + System.lineSeparator());
 					blueToothWriter.flush();
+					if (CarStereo.debug) System.out.println("BT set to discoverable");
 							
 					while (true){
 						inputText = br.readLine();
@@ -377,7 +382,7 @@ public class MainScreen {
 								blueToothClientConnStatus.add(false);
 							}
 							
-							System.out.println("BT DEVICE FOUND MAC: "+mac+ " Name: " + name);
+							if (CarStereo.debug) System.out.println("BT DEVICE FOUND MAC: "+mac+ " Name: " + name);
 						}
 						if (inputText.contains("Controller") && inputText.contains("NEW")){
 							temp = inputText.lastIndexOf(":");
@@ -389,7 +394,7 @@ public class MainScreen {
 								name = name.substring(0, temp3-2);
 							}
 							
-							System.out.println("BT CONTROLLER FOUND MAC: "+mac+ " Name: " + name);
+							if (CarStereo.debug) System.out.println("BT CONTROLLER FOUND MAC: "+mac+ " Name: " + name);
 						}
 						if (inputText.contains("CHG") && inputText.contains("Controller") && inputText.contains("Powered")){
 							// get powered state
@@ -400,14 +405,14 @@ public class MainScreen {
 								blueToothIsOn = false;
 							}
 							
-							System.out.println("BlueTooth is on: " + blueToothIsOn);
+							if (CarStereo.debug) System.out.println("BlueTooth is on: " + blueToothIsOn);
 						}
 						if (inputText.contains("agent") && inputText.contains("Confirm passkey")){
 							// accept any request to pair
 							blueToothWriter.write("yes"+System.lineSeparator());
 							blueToothWriter.flush();
 							
-							System.out.println("BlueTooth is on: " + blueToothIsOn);
+							if (CarStereo.debug) System.out.println("BlueTooth is on: " + blueToothIsOn);
 						}
 						if (inputText.contains("CHG") && inputText.contains("Controller") && inputText.contains("Discoverable")){
 							// get discoverable state
@@ -417,7 +422,7 @@ public class MainScreen {
 							} else {
 								blueToothIsDiscoverable = false;
 							}
-							System.out.println("BlueTooth is discoverable: " + blueToothIsOn);
+							if (CarStereo.debug) System.out.println("BlueTooth is discoverable: " + blueToothIsOn);
 						}
 						if (inputText.contains("CHG") && inputText.contains("Device") && inputText.contains("Connected")){
 							
@@ -427,18 +432,27 @@ public class MainScreen {
 							name = "";
 							
 							if (inputText.substring(temp+1).contains("yes")){
+								// start bluetooth audio
 								if (CarStereo.playMode != 3) CarStereo.killAllProcesses();
 								CarStereo.bluetoothIsPlaying = true;
 								CarStereo.playMode = 3;
 								CarStereo.currentlyConnectedBluetooth = mac;
+								
+								boolean nameIsKnown = false;
 								for (int i = 0; i < blueToothClientMacs.size(); i++){
 									if (blueToothClientMacs.get(i).contains(mac)) {
 										name = blueToothClientNames.get(i);
 										blueToothClientConnStatus.set(i, true);
 										CarStereo.infoText2 = "Device: " + name;
+										nameIsKnown = true;
 									}
 								}
+								// if the name is not in blueToothClientMacs use the MAC for CarStereo.infoText2 - something needs to go there
+								if (!nameIsKnown) {
+									CarStereo.infoText2 = "Mac: " + mac;
+								}
 							} else {
+								// stop bluetooth audio
 								boolean anyDevicesConnected = false;
 								for (int i = 0; i < blueToothClientMacs.size(); i++){
 									if (blueToothClientMacs.get(i).contains(mac)) {
@@ -453,7 +467,7 @@ public class MainScreen {
 									CarStereo.playMode = 0;
 								}
 							}
-							System.out.println("BT device connected: " + CarStereo.bluetoothIsPlaying + " Mac: "+ mac + " Name " + name);
+							if (CarStereo.debug) System.out.println("BT device connected: " + CarStereo.bluetoothIsPlaying + " Mac: "+ mac + " Name " + name);
 						}
 					}
 				} catch (IOException e) {
@@ -462,26 +476,24 @@ public class MainScreen {
 			}
 		};
 		blueToothMonitorThread.start();
+		if (CarStereo.debug) System.out.println("Bluetooth thread started");
+		
+		if (CarStereo.wasUsingRadioLastTime) {
+			if (CarStereo.debug) System.out.println("MainScreen: Radio was on " + CarStereo.lastRadioStation + " last time, auto starting radio...");
+			String[] command = {"/bin/sh", "-c", "rtl_fm -f "+CarStereo.lastRadioStation+"M -s 171000 -g 30 -F 9 | redsea -u -e | aplay -r 171000 -f S16_LE"};
+			CarStereo.infoText1 = "FM "+CarStereo.lastRadioStation+" MHz";
+			CarStereo.infoText2 = "Radio";
+			labelInfo1.setText(CarStereo.infoText1);
+			labelInfo2.setText(CarStereo.infoText2);
+			CarStereo.startRadio(command);
+		}
 	}
 	
 	void loadButtonlisteners(){
-		
-		/*
-		exitButton.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				// kill processes
-				CarStereo.killAllProcesses();
-				
-				// EXIT EVERYTHING
-				System.exit(0);
-			}
-			
-		}); */
-		
 		radioButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Radio button pressed");
 				openRadioScreen();
 				
 			}
@@ -491,6 +503,7 @@ public class MainScreen {
 		navigationButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Navigation button pressed");
 				try {
 					naviProcess = Runtime.getRuntime().exec("navit");
 				} catch (IOException e) {
@@ -504,6 +517,7 @@ public class MainScreen {
 		playPauseButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Play/Pause pressed");
 				if (CarStereo.playMode == 1){
 					startStopRadio();
 				} else if (CarStereo.playMode == 2){
@@ -514,6 +528,8 @@ public class MainScreen {
 					}
 					
 				} else if (CarStereo.playMode == 3){
+					// right now the button doesn't even show while in bluetooth mode
+					/*
 					String command = "dbus-send --system --print-reply --dest=org.bluez /org/bluez/hci0/dev_" + CarStereo.currentlyConnectedBluetooth + " org.bluez.MediaControl1.Play";
 					try {
 						Process sendCommand = Runtime.getRuntime().exec(command);
@@ -521,6 +537,7 @@ public class MainScreen {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					*/
 				}
 			}
 			
@@ -529,8 +546,20 @@ public class MainScreen {
 		mp3Button.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: MP3 button pressed");
 				// mp3 button pressed
-				openMP3Screen();
+				
+				String MEDIA_FOLDER_PATH=System.getProperty("user.home")+"/Media";
+				//String MEDIA_FOLDER_PATH="/home/pi/Media";
+				File file=new File(MEDIA_FOLDER_PATH);
+				File[] allSubFiles=file.listFiles();
+				
+				if (CarStereo.debug) System.out.println("*** Media path: " + MEDIA_FOLDER_PATH);
+				
+				if (allSubFiles != null) {
+					openMP3Screen();
+				}
+				
 			}
 			
 		});
@@ -538,6 +567,7 @@ public class MainScreen {
 		engineButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: OBD2 button pressed");
 				// engine button pressed
 				try {
 					//engineProcess = Runtime.getRuntime().exec("pcmanfm --no-desktop ~/Media");
@@ -553,6 +583,7 @@ public class MainScreen {
 		optionsButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Options button pressed");
 				openOptionsScreen();
 			}
 			
@@ -561,6 +592,7 @@ public class MainScreen {
 		bluetoothButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Bluetooth button pressed");
 				openBluetoothScreen();
 			}
 			
@@ -569,6 +601,7 @@ public class MainScreen {
 		nextTrackButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				if (CarStereo.debug) System.out.println("MainScreen: Next track button pressed");
 				try {
 						CarStereo.writer.write("q");
 						CarStereo.writer.flush();
@@ -598,7 +631,6 @@ public class MainScreen {
 	}
 	
 	void playPauseMP3(){
-		
 		try {
 			CarStereo.writer.write("p");
 			CarStereo.writer.flush();
@@ -610,10 +642,12 @@ public class MainScreen {
 		
 		if (CarStereo.mp3IsPlaying){
 			// if mp3 is already playing
+			if (CarStereo.debug) System.out.println("Paused MP3");
 			CarStereo.mp3IsPlaying = false;
 			labelInfo2.setText("= PAUSED =");
 		} else {
 			// not already playing
+			if (CarStereo.debug) System.out.println("Playing MP3 again");
 			CarStereo.mp3IsPlaying = true;
 			labelInfo1.setText(CarStereo.infoText1);
 			labelInfo2.setText(CarStereo.infoText2);
@@ -621,12 +655,15 @@ public class MainScreen {
 	}
 
 	void startStopRadio(){
+		
 		if (CarStereo.radioIsPlaying){
 			// if radio is already playing
+			if (CarStereo.debug) System.out.println("Stopping Radio");
 			CarStereo.radioIsPlaying = false;
 			CarStereo.stopRadio();
 		} else {
 			// if its not playing already
+			if (CarStereo.debug) System.out.println("Starting radio again");
 			CarStereo.radioIsPlaying = true;
 			String[] command = {"/bin/sh", "-c", "rtl_fm -f "+ CarStereo.lastRadioStation +"M -M fm -s 171000 | aplay -r 171000 -f S16_LE"};
 			try {
