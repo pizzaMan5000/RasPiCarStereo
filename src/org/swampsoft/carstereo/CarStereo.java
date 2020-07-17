@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 
 public class CarStereo {
 	public static double version = 1.00;
+	public static boolean debug = false;
 	
 	public static boolean radioIsPlaying = false;
 	public static boolean mp3IsPlaying = false;
@@ -45,12 +46,13 @@ public class CarStereo {
 	public static String infoText1;
 	public static String infoText2;
 	
-	public static String currentlyConnectedBluetooth;
+	public static String currentlyConnectedBluetooth = "";
 	
 	// properties
 	static Properties properties;
 	static String PROPERTIES_PATH;
 	public static String lastRadioStation = "";
+	public static boolean wasUsingRadioLastTime = false;
 	public static String fm1 = "";
 	public static String fm2 = "";
 	public static String fm3 = "";
@@ -67,7 +69,17 @@ public class CarStereo {
 	public static GraphicsDevice device = GraphicsEnvironment
 	        .getLocalGraphicsEnvironment().getScreenDevices()[0];
 	
+	static MainScreen mainScreen;
+	
 	public static void main(String[] args) {
+		// read arguments
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-debug")) {
+				debug = true;
+				System.out.println("Debug Messages On");
+			}
+		}
+		
 		// create properties if it doesn't exists
 		properties = new Properties();
 		PROPERTIES_PATH=System.getProperty("user.home")+"/CarStereoConfig.properties";
@@ -77,12 +89,13 @@ public class CarStereo {
 			properties.setProperty("lastRadioStation", "104.1");
 			
 			saveProperties();
+			if (debug) System.out.println("Properties file not found, new one created.");
 		}
 		
 		// load properties
 		loadProperties();
 		
-		MainScreen mainScreen = new MainScreen();
+		mainScreen = new MainScreen();
 	}
 	
 	public static void saveProperties(){
@@ -95,6 +108,12 @@ public class CarStereo {
 		if (fm6 != null) properties.setProperty("fm6", fm6);
 		if (fm7 != null) properties.setProperty("fm7", fm7);
 		if (fm8 != null) properties.setProperty("fm8", fm8);
+		if (wasUsingRadioLastTime) {
+			properties.setProperty("wasUsingRadioLastTime", "true");
+		} else {
+			properties.setProperty("wasUsingRadioLastTime", "false");
+		}
+		
 		
 		try {
 			FileOutputStream out = new FileOutputStream(PROPERTIES_PATH);
@@ -104,6 +123,7 @@ public class CarStereo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if (debug) System.out.println("Properties saved");
 	}
 	
 	public static void loadProperties(){
@@ -126,27 +146,61 @@ public class CarStereo {
 		fm6 = properties.getProperty("fm6");
 		fm7 = properties.getProperty("fm7");
 		fm8 = properties.getProperty("fm8");
+		wasUsingRadioLastTime = Boolean.parseBoolean(properties.getProperty("wasUsingRadioLastTime"));
 	}
 	
 	public static void stopMP3Player(){
-		if(CarStereo.writer != null){
-			//CarStereo.mediaPlaylist.clear();
-			CarStereo.mp3PlayerThread.interrupt();
-			CarStereo.mp3PlayerThread = null;
+		if (debug) System.out.println("Stopping omxplayer...");
+		if (writer != null){
+			//mediaPlaylist.clear();
 			try {
-				CarStereo.writer.write("q");
-				//CarStereo.writer.flush();
-				//CarStereo.writer.close();
+				writer.write("q");
+				writer.flush();
+				//writer.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			CarStereo.mp3IsPlaying = false;
-			CarStereo.playMode = 0;
+			mp3PlayerThread.interrupt();
+			mp3PlayerThread = null;
+		}
+		
+		// make sure omxplayer is dead
+		try {
+			Process process;
+			process = Runtime.getRuntime().exec("pgrep omxplayer");
+			BufferedReader br = new BufferedReader(
+				new InputStreamReader(process.getInputStream()));
+			String tempText;
+			while ((tempText = br.readLine()) != null) {
+				process = Runtime.getRuntime().exec("kill -9 " + Integer.parseInt(tempText));
+				if (debug) System.out.println("Stopping process with PID: " + tempText);
+			}
+			br.close();
+			process.waitFor();
+			process.destroy();
+			
+			playMode = 0;
+			mp3IsPlaying = false;
+			if (debug) System.out.println("OMXPlayer killed");
+			
+		} catch (IOException e) {
+			 //TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
 	public static void startRadio(String[] command){
+		if (debug) System.out.println("Starting radio with command:\n");
+		
+		for (int i = 0; i < command.length; i++) {
+			if (debug) System.out.print(command[i] + " ");
+		}
+		if (debug) System.out.println("");
+		
 		try {
 			radioProcess = Runtime.getRuntime().exec(command);
 			playMode = 1;
@@ -160,7 +214,7 @@ public class CarStereo {
 					int counter = 0;
 					try {
 						while ((tempText = br.readLine()) != null && counter < 35){
-							System.out.println(tempText);
+							//System.out.println(tempText);
 							if (tempText.contains("callsign") || tempText.contains("callsign_uncertain")) {
 								JSONObject jsonObj = JSON.parseObject(tempText);
 								
@@ -187,6 +241,7 @@ public class CarStereo {
 						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
+						System.out.println("THE FOLLOWING ERROR IS PROBABLY NOT A PROBLEM:");
 						e.printStackTrace();
 					}
 				}
@@ -195,35 +250,77 @@ public class CarStereo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		if (debug) System.out.println("Radio started. PID: " + radioTextThread.getId());
 	}
 	
 	public static void stopRadio(){
+		if (debug) System.out.println("Stopping radio...");
+		wasUsingRadioLastTime = false;
+		saveProperties();
 		try {
 			Process process = Runtime.getRuntime().exec("pgrep rtl_fm");
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(process.getInputStream()));
-			String rtlFMpid = br.readLine();
+			String tempText;
+			while ((tempText = br.readLine()) != null) {
+				process = Runtime.getRuntime().exec("kill -9 " + Integer.parseInt(tempText));
+			}
 			process.waitFor();
+			br.close();
 			process.destroy();
-			process = Runtime.getRuntime().exec("pgrep aplay");
+			process = Runtime.getRuntime().exec("pgrep aplay -a");
 			br = new BufferedReader(
 					new InputStreamReader(process.getInputStream()));
-			String aplayPid = br.readLine();
+			tempText = "";
+			while ((tempText = br.readLine()) != null) {
+				if (tempText.contains("bluealsa")) {
+					// don't kill this process, it has to do with the bluetooth audio player
+				} else {
+					// kill it!
+					process = Runtime.getRuntime().exec("kill -9 " + Integer.parseInt(tempText.substring(0, tempText.indexOf(" "))));
+					if (debug) System.out.println("Stopping process with PID: " + Integer.parseInt(tempText.substring(0, tempText.indexOf(" "))));
+				}
+			}
 			process.waitFor();
+			br.close();
 			process.destroy();
 			radioProcess.destroy();
-			process = Runtime.getRuntime().exec("kill -9 "+aplayPid);
-			process = Runtime.getRuntime().exec("kill -9 "+rtlFMpid);
 			radioIsPlaying = false;
+			//playMode = 0; // dont' do this, play/pause button will disappear
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if (debug) System.out.println("Radio stopped");
+	}
+	
+	public static void disconnectBluetooth() {
+		if (debug) System.out.println("Disconnecting BT device...");
+		// disconnect all bluetooth devices
+		if (mainScreen.blueToothMonitorThread != null) {
+			if (mainScreen.blueToothMonitorThread.isAlive()) {
+				if (mainScreen.blueToothWriter != null && !currentlyConnectedBluetooth.equals("")) {
+					if (debug) System.out.println("Disconnecting " + currentlyConnectedBluetooth);
+					try {
+						mainScreen.blueToothWriter.write("disconnect " + currentlyConnectedBluetooth + System.lineSeparator());
+						mainScreen.blueToothWriter.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+		}
+		playMode = 0;
+		
+		if (debug) System.out.println("BT device disconnected");
 	}
 
 	public static void killAllProcesses(){
+		if (debug) System.out.println("Kill all processes - Playmode: " + playMode);
 		// kill radio processes
 		if (playMode == 1){
 			stopRadio();
@@ -232,6 +329,7 @@ public class CarStereo {
 			stopMP3Player();
 		} else if (playMode == 3){
 			// stop bluetooth
+			disconnectBluetooth();
 		}
 	}
 }
