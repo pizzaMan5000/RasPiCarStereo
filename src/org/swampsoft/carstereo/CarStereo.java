@@ -221,20 +221,22 @@ public class CarStereo {
 								String callsign = jsonObj.getString("callsign");
 								String callsign_uncertain = jsonObj.getString("callsign_uncertain");
 								String prog_type = jsonObj.getString("prog_type");
+								String radioText = jsonObj.getString("radiotext");
 								
 								if (callsign != null && !callsign.contains("null")){
 									infoText1 = "FM " + lastRadioStation + " " + callsign;
 								}
 								
 								if (callsign_uncertain != null && !callsign_uncertain.contains("null")){
-									//infoText1 = callsign_uncertain + " (Error " + lastRadioStation + ")";
 									infoText1 = "FM " + lastRadioStation + " MHz";
 								}
 								
 								if (prog_type != null && !prog_type.contains("null")){
 									infoText2 = "" + prog_type;
-								} else {
-									//infoText2 = "Radio";
+								}
+								
+								if (radioText != null && !radioText.contains("null")){
+									infoText2 = "" + radioText;
 								}
 							}
 							counter++;
