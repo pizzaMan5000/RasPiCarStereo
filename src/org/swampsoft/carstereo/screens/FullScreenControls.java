@@ -3,6 +3,7 @@ package org.swampsoft.carstereo.screens;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Event;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -13,6 +14,8 @@ import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -20,6 +23,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -44,6 +48,10 @@ public class FullScreenControls {
 	JButton reverseButton;
 	BufferedImage reverseIcon;
 	
+	JLabel labelTime;
+	Thread timeThread;
+	DateTimeFormatter timeFormatter;
+	
 	MP3Screen mp3Screen;
 	MainScreen mainScreen;
 	
@@ -53,6 +61,9 @@ public class FullScreenControls {
 		
 		screenWidth = CarStereo.device.getDisplayMode().getWidth();
 		screenHeight = CarStereo.device.getDisplayMode().getHeight();
+		
+		timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+		Font font = new Font("RobotoCondensed", Font.PLAIN, 18);
 		
 		frame = new JFrame("Control");
 		frame.setBackground(Color.BLACK);
@@ -154,6 +165,15 @@ public class FullScreenControls {
 		});
 		panel.add(reverseButton);
 		
+		// time text on bottom
+		labelTime = new JLabel("");
+		labelTime.setSize(200,20);
+		labelTime.setForeground(Color.white);
+		labelTime.setFont(font);
+		labelTime.setHorizontalAlignment(JLabel.CENTER);
+		labelTime.setBounds((screenWidth-50)/2-labelTime.getWidth()/2, screenHeight-19, labelTime.getWidth(), labelTime.getHeight());
+		panel.add(labelTime);
+		
 		// WINDOW (frame)
 		frame.add(panel);
 		frame.setSize(screenWidth, screenHeight);
@@ -176,6 +196,7 @@ public class FullScreenControls {
 			
 		});
 		frame.setVisible(true); // do this last
+		startTimeThread(); // and this last too
 	}
 	
 	void playPauseVideo(){
@@ -231,6 +252,25 @@ public class FullScreenControls {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	void startTimeThread() {
+		timeThread = new Thread(){
+			public void run(){
+				while (true) {
+					labelTime.setText(timeFormatter.format(LocalDateTime.now()));
+					
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		};
+		timeThread.start();
 	}
 	
 	void closeScreen(){

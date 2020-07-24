@@ -404,8 +404,8 @@ public class MP3Screen {
 	}
 	
 	void playFile(){
-		String[] command = {"/bin/sh", "-c", "omxplayer -o local --no-osd --win " + 0 + "," + 10 + "," + (screenWidth-50) + 
-				"," + (screenHeight-20) + " "+playFile};
+		//String[] command = {"/bin/sh", "-c", "omxplayer -o local --no-osd --win " + 0 + "," + 10 + "," + (screenWidth-50) + "," + (screenHeight-20) + " "+playFile};
+		String[] command = {"/bin/sh", "-c", "omxplayer -o local --no-osd --win " + 0 + "," + 0 + "," + (screenWidth-50) + "," + (screenHeight-20) + " "+playFile};
 		
 		try {
 			CarStereo.mp3Process = Runtime.getRuntime().exec(command);
@@ -430,8 +430,8 @@ public class MP3Screen {
 				
 				while(CarStereo.mediaPlaylist.size() > 0 && CarStereo.mp3IsPlaying){
 					//this LOOP keeps playing music until the playlist is empty
-					//System.out.println(" Playlist size = " + CarStereo.mediaPlaylist.size());
 					if (CarStereo.debug) System.out.println("Play Thread Started");
+					
 					playFile = CarStereo.mediaPlaylist.get(0).getAbsolutePath();
 					
 					boolean isVideo = false;
@@ -467,8 +467,10 @@ public class MP3Screen {
 							CarStereo.fullScreenControls = new FullScreenControls(tempScreen, mainScreen);
 						}
 					} else {
-						CarStereo.fullScreenControls.closeScreen();
-						CarStereo.fullScreenControls = null;
+						if (CarStereo.fullScreenControls != null) {
+							CarStereo.fullScreenControls.closeScreen();
+							CarStereo.fullScreenControls = null;
+						}
 					}
 					
 					if (CarStereo.debug) System.out.println("Playing: " + playFile);
