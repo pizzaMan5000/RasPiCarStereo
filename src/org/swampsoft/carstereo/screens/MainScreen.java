@@ -301,7 +301,7 @@ public class MainScreen {
 						}
 					}
 					try {
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -665,7 +665,8 @@ public class MainScreen {
 			// if its not playing already
 			if (CarStereo.debug) System.out.println("Starting radio again");
 			CarStereo.radioIsPlaying = true;
-			String[] command = {"/bin/sh", "-c", "rtl_fm -f "+ CarStereo.lastRadioStation +"M -M fm -s 171000 | aplay -r 171000 -f S16_LE"};
+			//String[] command = {"/bin/sh", "-c", "rtl_fm -f "+ CarStereo.lastRadioStation +"M -M fm -s 171000 | aplay -r 171000 -f S16_LE"};
+			String[] command = {"/bin/sh", "-c", "rtl_fm -f "+CarStereo.lastRadioStation+"M -s 171000 -g 30 -F 9 | redsea -u -e | aplay -r 171000 -f S16_LE"};
 			try {
 				CarStereo.radioProcess = Runtime.getRuntime().exec(command);
 				CarStereo.playMode = 1;
