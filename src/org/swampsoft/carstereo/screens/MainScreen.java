@@ -104,21 +104,21 @@ public class MainScreen {
 		labelTime = new JLabel("Car Stereo");
 		labelTime.setForeground(Color.WHITE);
 		labelTime.setFont(font);
-		labelTime.setSize(420, 100);
+		labelTime.setSize(450, 82);
 		labelTime.setHorizontalAlignment(JLabel.CENTER);
 		labelTime.setBounds(screenWidth/4-labelTime.getWidth()/2, screenHeight/8*1, labelTime.getWidth(), labelTime.getHeight());
 	
 		labelInfo1 = new JLabel(dayFormatter.format(time));
 		labelInfo1.setForeground(Color.WHITE);
 		labelInfo1.setFont(font2);
-		labelInfo1.setSize(450, 32);
+		labelInfo1.setSize(430, 32);
 		labelInfo1.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo1.setBounds(screenWidth/4-labelInfo1.getWidth()/2, screenHeight/8*3, labelInfo1.getWidth(), labelInfo1.getHeight());
 		
 		labelInfo2 = new JLabel(monthFormatter.format(time));
 		labelInfo2.setForeground(Color.WHITE);
 		labelInfo2.setFont(font2);
-		labelInfo2.setSize(450, 32);
+		labelInfo2.setSize(430, 32);
 		labelInfo2.setHorizontalAlignment(JLabel.CENTER);
 		labelInfo2.setBounds(screenWidth/4-labelInfo2.getWidth()/2, screenHeight/8*4, labelInfo2.getWidth(), labelInfo2.getHeight());		 
 		
@@ -301,7 +301,7 @@ public class MainScreen {
 						}
 					}
 					try {
-						Thread.sleep(100);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
