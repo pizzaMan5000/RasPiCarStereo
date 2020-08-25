@@ -19,6 +19,7 @@ import org.swampsoft.carstereo.screens.MainScreen;
 import org.swampsoft.carstereo.screens.FullScreenControls;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class CarStereo {
@@ -28,6 +29,15 @@ public class CarStereo {
 	public static boolean radioIsPlaying = false;
 	public static boolean mp3IsPlaying = false;
 	public static boolean bluetoothIsPlaying = false;
+	
+	public static boolean radioPlusIsActive = false;
+	public static String rpSongName;
+	public static String rpArtistName;
+	public static String rpStationNameShort;
+	public static String rpStationNameLong;
+	public static String radioTextPlain;
+	public static String progTypePlain;
+	public static String callsignPlain;
 	
 	// play modes 0=off 1=FM/AM 2=MP3 3=BlueTooth
 	public static int playMode = 0;
@@ -194,6 +204,15 @@ public class CarStereo {
 	}
 	
 	public static void startRadio(String[] command){
+		radioPlusIsActive = false;
+		rpSongName = null;
+		rpArtistName = null;
+		rpStationNameShort = null;
+		rpStationNameLong = null;
+		radioTextPlain = null;
+		progTypePlain = null;
+		callsignPlain = null;
+		
 		if (debug) System.out.println("Starting radio with command:\n");
 		
 		for (int i = 0; i < command.length; i++) {
@@ -213,30 +232,104 @@ public class CarStereo {
 					String tempText;
 					int counter = 0;
 					try {
-						while ((tempText = br.readLine()) != null && counter < 35){
+						while ((tempText = br.readLine()) != null && radioIsPlaying){
 							//System.out.println(tempText);
-							if (tempText.contains("callsign") || tempText.contains("callsign_uncertain")) {
+							if (tempText.contains("pi") || tempText.contains("group")) {
 								JSONObject jsonObj = JSON.parseObject(tempText);
 								
 								String callsign = jsonObj.getString("callsign");
 								String callsign_uncertain = jsonObj.getString("callsign_uncertain");
 								String prog_type = jsonObj.getString("prog_type");
 								String radioText = jsonObj.getString("radiotext");
+								String radioTextPlus = jsonObj.getString("radiotext_plus");
+								
+								if (radioTextPlus != null) {
+									JSONObject tempJsonObj = JSON.parseObject(radioTextPlus);
+									String tags = tempJsonObj.getString("tags");
+									JSONArray jsonArray = JSON.parseArray(tags);
+									
+									if (jsonArray != null) {
+										for (int i = 0; i < jsonArray.size(); i++) {
+											JSONObject obj = JSON.parseObject(jsonArray.getString(i).toString());
+											
+											String contentType = obj.getString("content-type");
+											String data = obj.getString("data");
+											
+											if (contentType != null) {
+												if (contentType.contentEquals("item.artist")) {
+													rpArtistName = data;
+													radioPlusIsActive = true;
+												} else if (contentType.contentEquals("item.title")) {
+													rpSongName = data;
+													radioPlusIsActive = true;
+												} else if (contentType.contentEquals("stationname.short")) {
+													rpStationNameShort = data;
+													radioPlusIsActive = true;
+												} else if (contentType.contentEquals("stationname.long")) {
+													rpStationNameLong = data;
+													radioPlusIsActive = true;
+												}
+											}	
+										}
+									}
+								}
 								
 								if (callsign != null && !callsign.contains("null")){
-									infoText1 = "FM " + lastRadioStation + " " + callsign;
+									//infoText1 = "FM " + lastRadioStation + " " + callsign;
+									callsignPlain = callsign;
 								}
 								
 								if (callsign_uncertain != null && !callsign_uncertain.contains("null")){
-									infoText1 = "FM " + lastRadioStation + " MHz";
+									//infoText1 = "FM " + lastRadioStation + " MHz";
 								}
 								
 								if (prog_type != null && !prog_type.contains("null")){
-									infoText2 = "" + prog_type;
+									//infoText2 = "" + prog_type;
+									progTypePlain = prog_type;
 								}
 								
 								if (radioText != null && !radioText.contains("null")){
-									infoText2 = "" + radioText;
+									//infoText2 = "" + radioText;
+									radioTextPlain = radioText;
+								}
+								
+								if (radioPlusIsActive) {
+									if (rpArtistName != null) {
+										infoText1 = rpArtistName;
+									}
+									if (rpSongName != null) {
+										infoText2 = "" + rpSongName;
+									}
+									if (rpArtistName == null && rpSongName == null) {
+										if (rpStationNameLong != null) {
+											infoText1 = rpStationNameLong;
+										} else if (rpStationNameShort != null) {
+											infoText1 = rpStationNameShort;
+										} else if (callsignPlain != null) {
+											infoText1 = callsignPlain;
+										} else {
+											infoText1 = lastRadioStation;
+										}
+										
+										if (radioTextPlain != null) {
+											infoText2 = "" + radioTextPlain;
+										} else if (progTypePlain != null) {
+											infoText2 = "" + progTypePlain;
+										}
+									}
+								} else {
+									if (callsignPlain != null) {
+										infoText1 = callsignPlain;
+									} else {
+										infoText1 = lastRadioStation;
+									}
+									
+									if (radioTextPlain != null) {
+										infoText2 = "" + radioTextPlain;
+										infoText1 = infoText1 + " - " + progTypePlain;
+									} else if (progTypePlain != null) {
+										infoText2 = "" + progTypePlain;
+									}
 								}
 							}
 							counter++;
